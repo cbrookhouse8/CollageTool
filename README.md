@@ -8,3 +8,4 @@ This is an Eclipse Processing3 project which means:
 
 * [Timing](https://processing.org/reference/millis_.html)
 * [Tables](https://processing.org/reference/Table.html)
+* [Processing + Maven + Eclipse](http://jtoprocessing.tumblr.com/post/63945371987/how-to-processing-maven-eclipse)
