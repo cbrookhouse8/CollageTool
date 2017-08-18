@@ -18,15 +18,10 @@ import small.data.structures.Vec2;
  */
 public class SourceGrid extends Grid {
 	
-	// stores (row-major) indices of current selection
-	public Buffer buffer;
-	
 	public Color[] colors;
 	
 	public SourceGrid(PApplet _p, int _startX, int _startY, int _w, int _h, int _side) {
 		super(_p, _startX, _startY, _w, _h, _side);
-		
-		buffer = new Buffer(verticals, horizontals);
 		
 		// Initialise with arbitrary values
 		colors = new Color[horizontals * verticals];
@@ -38,9 +33,14 @@ public class SourceGrid extends Grid {
 		}
 	}
 	
-	public void listenForSelection() {
+	/**
+	 * Method to modify the buffer (by reference)
+	 * 
+	 * @param buffer stores (row-major) indices of current selection
+	 */
+	public Buffer updateBufferOnSelect(Buffer buffer) {
 		if (!squareIsBeingClicked()) {
-			return;
+			return buffer;
 		}
 		
 		toggleFrame = p.frameCount;
@@ -55,6 +55,8 @@ public class SourceGrid extends Grid {
 		} else {
 			buffer.add(gridPos);
 		}
+		
+		return buffer;
 	}
 	
 	public void showColors() {
@@ -69,7 +71,7 @@ public class SourceGrid extends Grid {
 		p.noFill();
 	}
 	
-	public void showSelectedSquares() {
+	public void showSelectedSquares(Buffer buffer) {
 		p.noStroke();
 		Set<Integer> selectedSquares = buffer.getKeySet();
 		for (Integer idx : selectedSquares) {
@@ -78,13 +80,5 @@ public class SourceGrid extends Grid {
 				   pos.y + 1,
 				   side - 2, side - 2);
 		}
-	}
-	
-	public void clearSelection() {
-		buffer.flush();
-	}
-	
-	public Buffer getBuffer() {
-		return buffer;
 	}
 }

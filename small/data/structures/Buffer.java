@@ -1,13 +1,16 @@
 package small.data.structures;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
+/**
+ * Holds the squares selected from the source grid
+ * to be placed in the target grid
+ * 
+ * Once the square indices have been inserted into
+ * the target grid's map, then the buffer is flushed
+ */
 public class Buffer {
-	// stores (row-major) indices of current map
-//	public List<Vec2> buffer = new ArrayList<>();
 	
 	/**
 	 * Integer row-major grid index of square
@@ -123,10 +126,22 @@ public class Buffer {
 		return map.keySet();
 	}
 	
+	/**
+	 * Integer row-major grid index of square
+	 * Vec2 relative position of square within grid
+	 */
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public HashMap<Integer, Vec2> getMap() {
 		return map;
 	}
 	
+	/**
+	 * @return buffer entry position that would be top left relative to source grid space
+	 */
 	public Vec2 getRelativeOrigin() {
 		return relativeOrigin;
 	}
