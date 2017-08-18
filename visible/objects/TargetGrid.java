@@ -82,6 +82,12 @@ public class TargetGrid extends Grid {
 			
 			// write to file
 			TableRow newMap = table.addRow();
+			
+			/**
+			 * TODO: check that id is set correctly for first row
+			 */
+			newMap.setInt("id", table.lastRowIndex());
+			
 			newMap.setInt("source_grid_id", sourceIdx);	// int
 			newMap.setInt("target_grid_id", targetIdx);	// int
 			
