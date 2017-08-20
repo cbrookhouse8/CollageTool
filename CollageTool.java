@@ -1,6 +1,8 @@
 import java.io.File;
+import java.util.HashMap;
 
 import persistence.CollageActionStore;
+import persistence.CollageConfiguration;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.data.Table;
@@ -50,32 +52,47 @@ public class CollageTool extends PApplet {
     	//table = loadTable("collage.csv");
     	
     		String file_name = "collage_map.csv";
-//    	File f = new File(dataPath(file_name));
-//    	if (!f.exists()) {
-//    		System.out.println(file_name + " does not exist in sketch folder");
-//    		System.out.println("Creating Table " + file_name + " for Collage storage");
-//    		
-//    	} else {
-//    		// "header" option indicates the file has a header row
-//    		table = loadTable(file_name, "header");
-//    	}
     	
 //	    img = loadImage("IMG_1951.jpg");
 //	    image(img, 0, 0);
 	    img = loadImage("IMG_1721.jpg");
 	    
-	    actionStore = new CollageActionStore(this, "data/collage_map.csv");
+	    actionStore = new CollageActionStore(this, file_name);
 	    
-	    /**
-	     * TODO: add logic to crop image to rect / square
-	     */
+	    boolean loadedFromFile = actionStore.loadFromFile();
 	    
+	    // Defaults
 	    int imgWidth = 500;		// px
 	    int imgHeight = 500;		// px
 	    gridSquareWidth = 20;	// px
 	    
+	    if (loadedFromFile) {
+	    		CollageConfiguration config = actionStore.getCollageConfiguration();
+	    		
+	    		imgWidth = config.getImgWidth();
+	    		imgHeight = config.getImgHeight();
+	    		
+	    		if (img.width != imgWidth) {
+	    			throw new RuntimeException("Loaded image has different width from imgWidth in configuration file.");
+	    		}
+	    		
+	    		if (img.height != imgHeight) {
+	    			throw new RuntimeException("Loaded image has different height from imgHeight in configuration file.");
+	    		}
+	    		
+	    		gridSquareWidth = config.getGridSquareWidth();
+	    }
+	    
+	    /**
+	     * TODO: add method such as TargetGrid.of(CollageActionStore c, PImage img);
+	     */
 	    sourceGrid = new SourceGrid(this, 0, 0, imgWidth, imgHeight, gridSquareWidth);
 	    targetGrid = new TargetGrid(this, img, imgWidth, 0, imgWidth, imgHeight, gridSquareWidth);
+	    
+	    if (loadedFromFile) { 
+	    		HashMap<Integer, Integer> storedGridMap = actionStore.getGridMap();
+	    		targetGrid.setGridMap(storedGridMap);
+	    }
 		
 	    // initialise to max length
 	    buffer = new Buffer(imgWidth / gridSquareWidth, imgHeight / gridSquareWidth);

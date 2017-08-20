@@ -5,9 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import processing.data.TableRow;
 import small.data.structures.Vec2;
 
 public class CollageActionEntry {
+	// May remain uninitialised
+	private int id;
+	private int groupId;
+	
+	// Must be initialized
 	private final Map <String, Integer> rowMap;
 	private final List<String> columnHeadings;
 	
@@ -51,12 +57,77 @@ public class CollageActionEntry {
 		columnHeadings = new ArrayList<String>(rowMap.keySet());
 	}
 	
+	public static CollageActionEntry of(TableRow row) {
+		CollageActionEntry entry = new CollageActionEntry(
+				row.getInt("source_grid_id"),
+				row.getInt("target_grid_id"),
+				row.getInt("source_grid_x"),
+				row.getInt("source_grid_y"),
+				row.getInt("target_grid_x"),
+				row.getInt("target_grid_y"),
+				row.getInt("row_major"),
+				row.getInt("img_width"),
+				row.getInt("img_height"),
+				row.getInt("grid_square_width"),
+				row.getInt("verticals"),
+				row.getInt("horizontals")
+		);
+		entry.setId(row.getInt("id"));
+		entry.setGroupId(row.getInt("group_id"));
+		
+		return entry;
+	}
+	
+	/**
+	 * Method called as part of this pattern:
+	 * 
+	 * CollageActionEntry.of(tableRow).getCollageConfiguration();
+	 * 
+	 * @return
+	 */
+	public CollageConfiguration extractConfigurationData() {
+		CollageConfiguration config = new CollageConfiguration();
+		
+		config.setRowMajor(rowMap.get("row_major"));
+		config.setImgWidth(rowMap.get("img_width"));
+		config.setImgHeight(rowMap.get("img_height"));
+		config.setGridSquareWidth(rowMap.get("grid_square_width"));
+		config.setVerticals(rowMap.get("verticals"));
+		config.setHorizontals(rowMap.get("horizontals"));
+		
+		return config;
+	}
+	
 	public List<String> getColumnHeadings() {
 		return columnHeadings;
 	}
 
 	public Map<String, Integer> getRowMap() {
 		return rowMap;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	
+	public int getSourceIdx() {
+		return rowMap.get("source_grid_id");
+	}
+
+	public int getTargetIdx() {
+		return rowMap.get("target_grid_id");
 	}
 	
 }

@@ -15,3 +15,4 @@ This is an Eclipse Processing3 project which means:
 * [Vim: Remove unwanted spaces](http://vim.wikia.com/wiki/Remove_unwanted_spaces) - vim.wikia
 * [Java 8 DateTime examples](https://gist.github.com/mscharhag/9195718) - mscharhag GitHub
 * [Git: diff file against its last change](https://stackoverflow.com/questions/10176601/git-diff-file-against-its-last-change) - StackOverflow
+* [Vim: Search for a Pattern and if occurs Delete to End of Line](https://stackoverflow.com/questions/569280/vim-search-for-a-pattern-and-if-occurs-delete-to-end-of-line) - StackOverflow

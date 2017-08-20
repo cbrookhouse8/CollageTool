@@ -1,0 +1,5 @@
+id,group_id,source_grid_id,source_grid_y,img_width,horizontals,target_grid_id,source_grid_x,img_height,target_grid_x,target_grid_y,verticals,row_major,grid_square_width
+0,0,83,3,500,25,153,8,500,3,3,25,1,20
+0,0,84,3,500,25,154,9,500,4,4,25,1,20
+0,0,136,5,500,25,206,11,500,6,6,25,1,20
+3,1,498,19,500,25,274,23,500,24,24,25,1,20

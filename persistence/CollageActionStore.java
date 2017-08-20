@@ -1,9 +1,12 @@
 package persistence;
 
+import java.io.File;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -20,13 +23,76 @@ import processing.data.TableRow;
 public class CollageActionStore {
 	protected PApplet p;
 	protected Table table;
+	protected String file_name;
 	protected String path;
 
-	public CollageActionStore(PApplet p, String path) {
+	public CollageActionStore(PApplet p, String file_name) {
 		super();
 		this.p = p;
-		this.path = path;
+		this.file_name = file_name;
+		this.path = "data/" + file_name;
 		table = new Table();
+	}
+	
+	public boolean loadFromFile() {
+		String dataPath = p.dataPath(file_name);
+	    	File f = new File(dataPath);
+	    	
+		System.out.println("Looking for collage data in "+dataPath);
+		
+		/**
+		 * If table has 0 rows on file, then this will probably cause
+		 * an error somewhere else in the program as we'll be assuming that
+		 * there exists row of collage configuration data and encounter
+		 * problems when trying to retrieve it.
+		 */
+	    	if (f.exists()) {
+	    		System.out.println("Loading collage data into CollageActionStore from file: "+dataPath);
+	    		
+	       	// "header" option indicates the file has a header row
+	    		table = p.loadTable(file_name, "header");
+	    		int rowCount = table.getRowCount();
+	    		System.out.println("Loaded table from file. Table has "+rowCount+" rows");
+	    		
+	    		if (rowCount == 0) throw new RuntimeException("Loaded file does not contain Collage config data.");
+	    		
+	    		return true;
+	    	} else {
+	    		System.out.println(file_name + " does not exist in sketch folder");
+	    		System.out.println("Initialising new Table " + file_name + " for Collage storage");
+	    		
+	    		table = new Table();
+	    		return false;
+	    	}
+	}
+	
+	/**
+	 * Only if this.loadFromFile() == true, should this method be called
+	 * @return
+	 */
+	public CollageConfiguration getCollageConfiguration() {
+		TableRow firstRow = table.getRow(0);
+		CollageActionEntry firstAction = CollageActionEntry.of(firstRow);
+		CollageConfiguration config = firstAction.extractConfigurationData();
+		return config;
+	}
+	
+	/**
+	 * 
+	 * @return (key) index into target grid, (value) index into source grid
+	 */
+	public HashMap<Integer, Integer> getGridMap() {
+		HashMap<Integer, Integer> gridMap = new HashMap<>();
+		
+		Iterable<TableRow> rowIter = table.rows();
+		
+		for (TableRow row : rowIter) {
+			CollageActionEntry entry = CollageActionEntry.of(row);
+			// int is Boxed for the map to Integer
+			gridMap.put(entry.getTargetIdx(), entry.getSourceIdx());
+		}
+				
+		return gridMap;
 	}
 	
 	public void addActionGroup(List<CollageActionEntry> group) {

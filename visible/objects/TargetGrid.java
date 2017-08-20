@@ -102,11 +102,8 @@ public class TargetGrid extends Grid {
 		buffer.flush();
 	}
 	
-	/**
-	 * Initializes from the passed file.
-	 */
-	public void initializeFromTable() {
-		
+	public void setGridMap(HashMap<Integer, Integer> gridMap) {
+		this.gridMap = gridMap;
 	}
 	
 	public void showImageSegments() {
