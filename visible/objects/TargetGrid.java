@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import persistence.CollageActionEntry;
+import persistence.CollageActionStore;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.data.Table;
@@ -22,14 +24,12 @@ public class TargetGrid extends Grid {
 	// Target Grid Index => Source Grid Index
 	HashMap<Integer, Integer> gridMap;
 	PImage imgRef;
-	Table table;
 	
 	
-	public TargetGrid(PApplet _p, PImage img, Table _table, int _startX, int _startY, int _w, int _h, int _side) {
+	public TargetGrid(PApplet _p, PImage img, int _startX, int _startY, int _w, int _h, int _side) {
 		super(_p, _startX, _startY, _w, _h, _side);
 		gridMap = new HashMap<>();
 		imgRef = img;
-		table = _table;
 	}
 	
 	/**
@@ -38,12 +38,18 @@ public class TargetGrid extends Grid {
 	 * @param offset of grid square mouse is over from the top left corner
 	 * of the grid
 	 */
-	public void updateMap(Buffer buffer) {
+	public void updateMap(Buffer buffer, CollageActionStore actionStore) {
 		if (!squareIsBeingClicked()) {
 			return;
 		}
-				
+		
 		HashMap<Integer, Vec2> selection = buffer.getMap();
+		
+		if (selection.isEmpty()) {
+			System.out.println("Tried to updateMap but found buffer was empty");
+			return;
+		}
+		
 		Vec2 relativeOrigin = buffer.getRelativeOrigin();
 		
 //		Color[] sourceColors = sourceGrid.colors;
@@ -54,6 +60,8 @@ public class TargetGrid extends Grid {
 		Vec2 offset = screenSpaceToGridPos(p.mouseX, p.mouseY);
 		
 		System.out.println("Updating final map in TargetGrid");
+		
+		List<CollageActionEntry> group = new ArrayList<>();
 		
 		for (Map.Entry<Integer, Vec2> gridSq : selection.entrySet()) {
 			int sourceIdx = gridSq.getKey();
@@ -80,30 +88,17 @@ public class TargetGrid extends Grid {
 				gridMap.put(targetIdx, sourceIdx);
 			}
 			
-			// write to file
-			TableRow newMap = table.addRow();
+			CollageActionEntry entry = new CollageActionEntry(
+					sourceIdx, targetIdx, 
+					sourceVec.x, sourceVec.y, 
+					targetLoc.x, targetLoc.y, 
+					1, this.w, this.h, this.side, 
+					this.verticals, this.horizontals);
 			
-			/**
-			 * TODO: check that id is set correctly for first row
-			 */
-			newMap.setInt("id", table.lastRowIndex());
-			
-			newMap.setInt("source_grid_id", sourceIdx);	// int
-			newMap.setInt("target_grid_id", targetIdx);	// int
-			
-			newMap.setInt("source_grid_x", sourceVec.x);	// int
-			newMap.setInt("source_grid_y", sourceVec.y);	// int
-			newMap.setInt("target_grid_x", targetLoc.x);	// int
-			newMap.setInt("target_grid_y", targetLoc.y);	// int
-			
-			newMap.setInt("row_major", 1);				// int (representing boolean) 
-			newMap.setInt("img_width", w);				// int (pixels)
-			newMap.setInt("img_height", h);				// int (pixels)
-			newMap.setInt("grid_square_width", side);	// int (pixels)
-			newMap.setInt("verticals", verticals);
-			newMap.setInt("horizontals", horizontals);
-			p.saveTable(table, "data/collage_map.csv");
+			group.add(entry);
 		}
+				
+		actionStore.addActionGroup(group);
 		buffer.flush();
 	}
 	
