@@ -126,7 +126,7 @@ public class CollageActionStore {
 		}
 				
 		for (CollageActionEntry actionEntry : group) {
-			addAction(actionEntry, groupId, isFirstRow);
+			addAction(actionEntry, groupId);
 		}
 		
 		// write to file		
@@ -147,7 +147,7 @@ public class CollageActionStore {
 	 * 
 	 * @param collageActionEntry row values (except for id, which CollageActionStore controls)
 	 */
-	private void addAction(CollageActionEntry collageActionEntry, int group_id, boolean isFirstRow) {
+	private void addAction(CollageActionEntry collageActionEntry, int group_id) {
 		
 		List<String> columnHeadings = collageActionEntry.getColumnHeadings();
 		Map<String, Integer> rowMap = collageActionEntry.getRowMap();
@@ -155,12 +155,14 @@ public class CollageActionStore {
 		TableRow row = table.addRow();
 		
 		// id
+		int lastRowIdx = table.lastRowIndex();
 		
-		if (isFirstRow) { 
-			row.setInt("id", 0);
-		} else {
-			row.setInt("id", table.lastRowIndex());
+		if (lastRowIdx < 0) {
+			// Not sure what would cause this to happen. Remove?
+			throw new RuntimeException("lastRowIdx < 0 in CollageActionStore.addAction()");
 		}
+		
+		row.setInt("id", lastRowIdx);
 		
 		// group id
 		
