@@ -111,6 +111,8 @@ public class CollageTool extends PApplet {
 //        targetGrid.showColors();
         targetGrid.showImageSegments();
         
+        // When squares are clicked on the source
+        // update the buffer with their indexes
         sourceGrid.updateBufferOnSelect(buffer);
 //        sourceGrid.showColors();
         
@@ -123,9 +125,7 @@ public class CollageTool extends PApplet {
         sourceGrid.showHoverSelection();
         
         noFill();
-        if (mousePressed) {
-        		targetGrid.updateMap(buffer, actionStore);
-        }
+        	targetGrid.updateMap(buffer, actionStore);
     }
     
 }	// end of PApplet extension

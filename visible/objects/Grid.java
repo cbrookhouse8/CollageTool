@@ -6,8 +6,8 @@ import small.data.structures.Vec2;
 
 public class Grid {
 	protected PApplet p;
-	protected int w;	// width
-	protected int h;	// height
+	protected int w;		// width
+	protected int h;		// height
 	protected int side;	// length of square side
 	protected int verticals;
 	protected int horizontals;
@@ -50,8 +50,7 @@ public class Grid {
 	}
 
 	public void showHoverSelection() {
-		Vec2 gridLoc = screenSpaceToGridPos(p.mouseX, 
-								 p.mouseY);
+		Vec2 gridLoc = screenSpaceToGridPos(p.mouseX, p.mouseY);
 		int xcorn = startX + side * gridLoc.x;
 		int ycorn = startY + side * gridLoc.y;
 		p.noStroke();
@@ -72,7 +71,8 @@ public class Grid {
 		boolean checks = p.mousePressed;
 		// have we already detected this click?
 		checks = checks && (curFrame - toggleFrame) > 20;
-		// is the mouse in the grid space?
+		
+		// check if the mouse in the space of the grid instance
 		checks = checks && inRange(p.mouseX, startX, startX + side * verticals);
 		checks = checks && inRange(p.mouseY, startY, startY + side * horizontals);
 		
