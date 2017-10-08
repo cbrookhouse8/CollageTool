@@ -3,6 +3,7 @@ package visible.objects;
 import processing.core.PApplet;
 import small.data.structures.Color;
 import small.data.structures.Vec2;
+import utilities.Logger;
 
 public class Grid {
 	protected PApplet p;
@@ -16,6 +17,8 @@ public class Grid {
 	protected int startY;
 	
 	protected int toggleFrame;
+	
+	protected Logger log;
 	
 	public Grid(PApplet _p, int _startX, int _startY, int _w, int _h, int _side) {
 		this.p = _p;
@@ -32,6 +35,8 @@ public class Grid {
 		
 		this.startX = _startX;
 		this.startY = _startY;
+		
+		this.setLogger(new Logger(this));
 	}
 	
 	public void showGridLines() {
@@ -78,7 +83,7 @@ public class Grid {
 		
 		// ok- toggle the square
 		if (checks) {
-			System.out.println("Mouse pressed at frame " + curFrame);
+			log.info("Mouse pressed at frame " + curFrame);
 			return true;
 		}
 		return false;
@@ -99,12 +104,12 @@ public class Grid {
 	protected Vec2 gridIndexToGridPos(int idx) {
 		Vec2 loc = new Vec2(idx % verticals, idx / horizontals);
 		if (!inRange(loc.x, 0, verticals)) {
-			System.out.println("Input index is out of grid space. Constraining x");
+			log.info("Input index is out of grid space. Constraining x");
 			// is there off by one here?
 			loc.x = verticals;
 		}
 		if (!inRange(loc.y, 0, horizontals)) {
-			System.out.println("Input index is out of grid space. Constraining y");
+			log.info("Input index is out of grid space. Constraining y");
 			// is there off by one here?
 			loc.y = horizontals;
 		}
@@ -114,7 +119,7 @@ public class Grid {
 	protected int gridPosToGridIndex(Vec2 pos) {
 		int idx = pos.y * verticals + pos.x;
 		if (!inRange(idx, -1, verticals * horizontals)) {
-			System.out.println("Grid position in the index range of the grid. Constraining to 0.");
+			log.info("Grid position in the index range of the grid. Constraining to 0.");
 			return 0;
 		}
 		return idx;
@@ -150,7 +155,7 @@ public class Grid {
 			if (!inRange(idx, -1, verticals * horizontals)) {
 				String msg = "Input index is out of range of the ranges of values for the grid index."
 							 + "Constraining index to 0";
-				System.out.println(msg);
+				log.info(msg);
 				idx = 0;
 			}
 			return idx;
@@ -163,7 +168,7 @@ public class Grid {
 	 */
 	protected Vec2 gridIndexToScreenSpace(int idx) {
 		if (!inRange(idx, -1, verticals * horizontals)) {
-			System.out.println("Index is out of bounds. Returning the 0 Vector");
+			log.info("Index is out of bounds. Returning the 0 Vector");
 			return new Vec2(0, 0);
 		}
 		int grid_col = idx % horizontals;
@@ -174,6 +179,10 @@ public class Grid {
 		
 		// top left corner
 		return new Vec2(startX + grid_col * side, startY + grid_row * side);
+	}
+	
+	protected void setLogger(Logger log) {
+		this.log = log;
 	}
 	
 }

@@ -14,6 +14,7 @@ import processing.data.TableRow;
 import small.data.structures.Buffer;
 import small.data.structures.Color;
 import small.data.structures.Vec2;
+import utilities.Logger;
 
 /**
  * Holds and displays current state of the Collage
@@ -25,11 +26,11 @@ public class TargetGrid extends Grid {
 	HashMap<Integer, Integer> gridMap;
 	PImage imgRef;
 	
-	
 	public TargetGrid(PApplet _p, PImage img, int _startX, int _startY, int _w, int _h, int _side) {
 		super(_p, _startX, _startY, _w, _h, _side);
 		gridMap = new HashMap<>();
 		imgRef = img;
+		this.setLogger(new Logger(this));
 	}
 	
 	/**
@@ -46,7 +47,7 @@ public class TargetGrid extends Grid {
 		HashMap<Integer, Vec2> selection = buffer.getMap();
 		
 		if (selection.isEmpty()) {
-			System.out.println("Tried to updateMap but found buffer was empty");
+			log.info("Tried to updateMap but found buffer was empty");
 			return;
 		}
 		
@@ -54,12 +55,12 @@ public class TargetGrid extends Grid {
 		
 //		Color[] sourceColors = sourceGrid.colors;
 		
-		System.out.println("TargetGrid square has been clicked");
+		log.info("square has been clicked");
 		
 		// Calculate offset
 		Vec2 offset = screenSpaceToGridPos(p.mouseX, p.mouseY);
 		
-		System.out.println("Updating final map in TargetGrid");
+		log.info("updating final map");
 		
 		List<CollageActionEntry> group = new ArrayList<>();
 		
@@ -73,7 +74,7 @@ public class TargetGrid extends Grid {
 			if (isOutsideGrid(targetLoc)) {
 				String msg = "Offset (relativeOrigin) resulted in translation ";
 				msg += "of source grid square out of target grid range.";
-				System.out.println(msg);
+				log.info(msg);
 				continue;
 			}
 			
@@ -84,7 +85,7 @@ public class TargetGrid extends Grid {
 			if (gridMap.containsKey(targetIdx)) {
 				gridMap.replace(targetIdx, sourceIdx);
 			} else {
-				System.out.println("Inserting "+targetIdx+"<=>"+sourceIdx+" into gridMap");
+				log.info("Inserting "+targetIdx+"<=>"+sourceIdx+" into gridMap");
 				gridMap.put(targetIdx, sourceIdx);
 			}
 			

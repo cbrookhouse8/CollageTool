@@ -9,6 +9,7 @@ import processing.core.PApplet;
 import small.data.structures.Buffer;
 import small.data.structures.Color;
 import small.data.structures.Vec2;
+import utilities.Logger;
 
 /**
  * TODO: buffer and relativeOrigin should be independent data structure
@@ -23,6 +24,8 @@ public class SourceGrid extends Grid {
 	public SourceGrid(PApplet _p, int _startX, int _startY, int _w, int _h, int _side) {
 		super(_p, _startX, _startY, _w, _h, _side);
 		
+		this.setLogger(new Logger(this));
+		
 		// Initialise with arbitrary values
 		colors = new Color[horizontals * verticals];
 		
@@ -31,6 +34,7 @@ public class SourceGrid extends Grid {
 								(int) (p.random(0,1) * 255),
 								(int) (p.random(0,1) * 255));
 		}
+		
 	}
 	
 	/**
@@ -46,7 +50,7 @@ public class SourceGrid extends Grid {
 		toggleFrame = p.frameCount;
 		int idx = screenSpaceToGridIndex(p.mouseX, p.mouseY);
 		
-		System.out.println("SourceGrid: Toggling square at index "+idx);
+		log.info("Toggling square at index "+idx);
 		
 		Vec2 gridPos = screenSpaceToGridPos(p.mouseX, p.mouseY);
 

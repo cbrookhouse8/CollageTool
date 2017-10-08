@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import utilities.Logger;
 
 import processing.core.PApplet;
 import processing.data.Table;
@@ -25,6 +26,7 @@ public class CollageActionStore {
 	protected Table table;
 	protected String file_name;
 	protected String path;
+	protected Logger log;
 
 	public CollageActionStore(PApplet p, String file_name) {
 		super();
@@ -32,13 +34,15 @@ public class CollageActionStore {
 		this.file_name = file_name;
 		this.path = "data/" + file_name;
 		table = new Table();
+		
+		this.log = new Logger(this);
 	}
 	
 	public boolean loadFromFile() {
 		String dataPath = p.dataPath(file_name);
 	    	File f = new File(dataPath);
 	    	
-		System.out.println("Looking for collage data in "+dataPath);
+		log.info("Looking for collage data in "+dataPath);
 		
 		/**
 		 * If table has 0 rows on file, then this will probably cause
@@ -47,19 +51,19 @@ public class CollageActionStore {
 		 * problems when trying to retrieve it.
 		 */
 	    	if (f.exists()) {
-	    		System.out.println("Loading collage data into CollageActionStore from file: "+dataPath);
+	    		log.info("Loading collage data into CollageActionStore from file: "+dataPath);
 	    		
 	       	// "header" option indicates the file has a header row
 	    		table = p.loadTable(file_name, "header");
 	    		int rowCount = table.getRowCount();
-	    		System.out.println("Loaded table from file. Table has "+rowCount+" rows");
+	    		log.info("Loaded table from file. Table has "+rowCount+" rows");
 	    		
 	    		if (rowCount == 0) throw new RuntimeException("Loaded file does not contain Collage config data.");
 	    		
 	    		return true;
 	    	} else {
-	    		System.out.println(file_name + " does not exist in sketch folder");
-	    		System.out.println("Initialising new Table " + file_name + " for Collage storage");
+	    		log.info(file_name + " does not exist in sketch folder");
+	    		log.info("Initialising new Table " + file_name + " for Collage storage");
 	    		
 	    		table = new Table();
 	    		return false;
@@ -98,11 +102,11 @@ public class CollageActionStore {
 	public void addActionGroup(List<CollageActionEntry> group) {
 		
 		if (group.size() == 0) { 
-			System.out.println("Empty group passed to CollageActionStore.addActionGroup");
+			log.info("Empty group passed to .addActionGroup");
 			return;
 		}
 		
-		System.out.println("group size: " + group.size());
+		log.info("group size: " + group.size());
 		
 		List<String> columnHeadings = group.get(0).getColumnHeadings();
 		
@@ -117,7 +121,7 @@ public class CollageActionStore {
 			table.addColumn("id");
 			table.addColumn("group_id");
 			
-			System.out.println("Initialising column headings from CollageActionEntry");
+			log.info("Initialising column headings from CollageActionEntry");
 			for (String columnName : columnHeadings) {
 				table.addColumn(columnName);
 			}
@@ -140,7 +144,7 @@ public class CollageActionStore {
 		Instant instant = Instant.now();
 		String output = formatter.format(instant);
 		
-		System.out.println("Table saved on: " + output);
+		log.info("Table saved on: " + output);
 	}
 	
 	/**

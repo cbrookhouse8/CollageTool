@@ -3,6 +3,8 @@ package small.data.structures;
 import java.util.HashMap;
 import java.util.Set;
 
+import utilities.Logger;
+
 /**
  * Holds the squares selected from the source grid
  * to be placed in the target grid
@@ -23,8 +25,11 @@ public class Buffer {
 
 	private int gridCols;
 	private int gridRows;
+	
+	private Logger log;
 
 	public Buffer(int cols, int rows) {
+		log = new Logger(this);
 		gridCols = cols;
 		gridRows = rows;
 		// initialize class variables
@@ -41,11 +46,11 @@ public class Buffer {
 		int idx = gridPos.y * gridRows + gridPos.x;
 		
 		if (idx < 0 || idx > gridCols * gridRows - 1) {
-			System.out.println("Could not add to buffer. Grid square is out of range.");
+			log.info("Could not add. Grid square is out of range.");
 		}
 		
 		if (map.containsKey(idx)) {
-			System.out.println("Could not add to buffer. Key already exists in buffer.");
+			log.info("Could not add. Key already exists in buffer.");
 			return;
 		}
 		
@@ -53,10 +58,10 @@ public class Buffer {
 		
 		// check whether relativeOrigin needs updating
 		if (gridPos.x < relativeOrigin.x) {
-			System.out.println("Updated relativeOrigin in buffer");
+			log.info("Updated relativeOrigin");
 			relativeOrigin = gridPos;
 		} else if (gridPos.x == relativeOrigin.x && gridPos.y < relativeOrigin.y) {
-			System.out.println("Updated relativeOrigin in buffer");
+			log.info("Updated relativeOrigin");
 			relativeOrigin = gridPos;
 		}
 		
@@ -72,14 +77,14 @@ public class Buffer {
 		int idx = gridPos.y * gridRows + gridPos.x;
 
 		if (!map.containsKey(idx)) {
-			System.out.println("Could not remove from buffer. Key is not in buffer.");
+			log.info("Could not remove. Key is not in buffer.");
 			return;
 		}
 		
 		// check whether relativeOrigin needs updating
 		if (gridPos.equals(relativeOrigin)) {
-			System.out.println("Removing current relative origin requires the relative origin to be updated.");
-			System.out.println("Updating relative origin.");
+			log.info("Removing current relative origin requires the relative origin to be updated.");
+			log.info("Updating relative origin.");
 			
 			// find a better way of doing this
 			
@@ -109,15 +114,15 @@ public class Buffer {
 	
 	public void removeIndex(int idx) {
 		if (map.containsKey(idx)) {
-			System.out.println("Removing index "+idx+" from buffer.");
+			log.info("Removing index "+idx);
 			map.remove(idx);
 		} else {
-			System.out.println("Could not find index "+idx+" to remove from buffer");
+			log.info("Could not find index "+idx+" to remove from buffer");
 		}
 	}
 	
 	public void flush() {
-		System.out.println("Flush buffer");
+		log.info("Flush");
 		map = new HashMap<>();
 		relativeOrigin = new Vec2(gridCols - 1, gridRows - 1);
 	}

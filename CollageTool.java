@@ -10,6 +10,7 @@ import small.data.structures.Buffer;
 import visible.objects.Grid;
 import visible.objects.SourceGrid;
 import visible.objects.TargetGrid;
+import utilities.Logger;
 
 /**
  * TODO: handle the offsets properly
@@ -18,6 +19,8 @@ import visible.objects.TargetGrid;
  *
  */
 public class CollageTool extends PApplet {
+	
+	Logger log;
 	
 	int gridSquareWidth;
 	
@@ -44,27 +47,35 @@ public class CollageTool extends PApplet {
 	}
 	
     public void settings() {
-        size(1000, 500);     
+        size(1280, 640);     
     }
  
     public void setup() {
+    	
+    		log = new Logger(this);
     	// Load or Initialize Table
     	//table = loadTable("collage.csv");
     	
-    		String file_name = "collage_map.csv";
+//    		String file_name = "collage_map.csv";
+    		String file_name = "river_dev.csv";
     	
 //	    img = loadImage("IMG_1951.jpg");
 //	    image(img, 0, 0);
-	    img = loadImage("IMG_1721.jpg");
+	    //img = loadImage("IMG_1721.jpg");
+    		img = loadImage("IMG_1661_sq_small.JPG");
 	    
 	    actionStore = new CollageActionStore(this, file_name);
 	    
 	    boolean loadedFromFile = actionStore.loadFromFile();
 	    
 	    // Defaults
-	    int imgWidth = 500;		// px
-	    int imgHeight = 500;		// px
-	    gridSquareWidth = 20;	// px
+//	    int imgWidth = 500;		// px
+//	    int imgHeight = 500;		// px
+	    
+	    int imgWidth = 640;		// px
+	    int imgHeight = 640;		// px
+	    
+	    gridSquareWidth = 16;	// px
 	    
 	    if (loadedFromFile) {
 	    		CollageConfiguration config = actionStore.getCollageConfiguration();
@@ -99,14 +110,14 @@ public class CollageTool extends PApplet {
     }
  
     public void draw() {
-        background(255);
+        background(0);
         image(img, 0, 0);
         
-        stroke(200);
+        stroke(0);
         sourceGrid.showGridLines();
 //        fill(0,179,255,100);
         
-        stroke(100);
+        stroke(0);
         targetGrid.showGridLines();
 //        targetGrid.showColors();
         targetGrid.showImageSegments();
