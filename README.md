@@ -4,7 +4,32 @@ This is an Eclipse Processing3 project which means:
 
 [Processing in Eclipse](https://processing.org/tutorials/eclipse/)
 
-## References
+**Ideas**
+
+* Undo button
+* Automatically handle rectangular images (not sure resampling is worth it)
+* Drag selection
+* manipulations
+
+	```
+		// y-reflect
+		a b c d --> d c b a
+		
+		// y-reflect
+		a b 	 --> b a
+		c d  --> d c
+		
+		// do similar for x
+	```
+* reassign squares within the target grid (in fact, all the operations of the source grid should also be possible for the target grid)
+
+**TODO**
+
+* Fix selection button
+* show last selection and allow continued pasting until source grid is selected again.
+* show which square will be used as the reference square
+
+**References**
 
 * [Timing](https://processing.org/reference/millis_.html)
 * [Tables](https://processing.org/reference/Table.html)
