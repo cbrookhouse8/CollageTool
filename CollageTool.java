@@ -107,9 +107,11 @@ public class CollageTool extends PApplet {
 		
 	    // initialise to max length
 	    buffer = new Buffer(imgWidth / gridSquareWidth, imgHeight / gridSquareWidth);
+	    
     }
  
     public void draw() {
+    	
         background(0);
         image(img, 0, 0);
         
@@ -122,9 +124,11 @@ public class CollageTool extends PApplet {
 //        targetGrid.showColors();
         targetGrid.showImageSegments();
         
+        fill(250);
+        sourceGrid.showHoverSelection();
+        
         // When squares are clicked on the source
         // update the buffer with their indexes
-        sourceGrid.updateBufferOnSelect(buffer);
 //        sourceGrid.showColors();
         
         // sourceGrid provides the view 
@@ -132,11 +136,28 @@ public class CollageTool extends PApplet {
         fill(42, 182, 242);
         sourceGrid.showSelectedSquares(buffer);
         
-        fill(250);
-        sourceGrid.showHoverSelection();
-        
         noFill();
-        	targetGrid.updateMap(buffer, actionStore);
+    }
+    
+    // Processing enforces the logic:
+    // mouseClicked xor MouseDragged
+    public void mouseClicked() {
+    		// don't use mouseReleased to detect mouseClicked
+    		log.info("Mouse clicked at frame " + frameCount);
+    		
+    		sourceGrid.updateBufferOnClick(buffer);
+    		targetGrid.updateMap(buffer, actionStore);
+    }
+    
+    // Logic: mouseClicked && mouseReleased
+    public void mouseReleased() {
+    		log.info("Mouse released at frame " + frameCount);
+    }
+    
+    // Logic: at the end of the drag action, mouseReleased
+    public void mouseDragged() {
+    		log.info("Mouse dragged at frame " + frameCount);
+    		sourceGrid.updateBufferOnDrag(buffer);
     }
     
 }	// end of PApplet extension

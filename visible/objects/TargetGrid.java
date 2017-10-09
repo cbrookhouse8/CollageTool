@@ -40,7 +40,7 @@ public class TargetGrid extends Grid {
 	 * of the grid
 	 */
 	public void updateMap(Buffer buffer, CollageActionStore actionStore) {
-		if (!squareIsBeingClicked()) {
+		if (!mouseOverSquare()) {
 			return;
 		}
 		

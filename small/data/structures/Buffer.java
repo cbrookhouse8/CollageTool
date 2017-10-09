@@ -49,6 +49,7 @@ public class Buffer {
 			log.info("Could not add. Grid square is out of range.");
 		}
 		
+		// May be better to use a HashSet here
 		if (map.containsKey(idx)) {
 			log.info("Could not add. Key already exists in buffer.");
 			return;

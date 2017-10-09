@@ -42,21 +42,41 @@ public class SourceGrid extends Grid {
 	 * 
 	 * @param buffer stores (row-major) indices of current selection
 	 */
-	public Buffer updateBufferOnSelect(Buffer buffer) {
-		if (!squareIsBeingClicked()) {
+	public Buffer updateBufferOnClick(Buffer buffer) {
+		if (!mouseOverSquare()) {
 			return buffer;
 		}
 		
-		toggleFrame = p.frameCount;
 		int idx = screenSpaceToGridIndex(p.mouseX, p.mouseY);
 		
 		log.info("Toggling square at index "+idx);
 		
 		Vec2 gridPos = screenSpaceToGridPos(p.mouseX, p.mouseY);
-
+		
+		// mouseClicked toggle logic
 		if (buffer.containsPosition(gridPos)) {
 			buffer.remove(gridPos);
 		} else {
+			buffer.add(gridPos);
+		}
+		
+		return buffer;
+	}
+	
+	public Buffer updateBufferOnDrag(Buffer buffer) {
+		if (!mouseOverSquare()) {
+			return buffer;
+		}
+		
+		int idx = screenSpaceToGridIndex(p.mouseX, p.mouseY);
+		
+		log.info("Adding square at index "+idx+" from the drag area.");
+		
+		Vec2 gridPos = screenSpaceToGridPos(p.mouseX, p.mouseY);
+		
+		// Note difference between this logic
+		// and mouse clicked logic
+		if (!buffer.containsPosition(gridPos)) {
 			buffer.add(gridPos);
 		}
 		

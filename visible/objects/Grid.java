@@ -21,10 +21,10 @@ public class Grid {
 	protected Logger log;
 	
 	public Grid(PApplet _p, int _startX, int _startY, int _w, int _h, int _side) {
-		this.p = _p;
-		this.w = _w;
-		this.h = _h;
-		this.side = _side;
+		p = _p;
+		w = _w;
+		h = _h;
+		side = _side;
 	
 		int n_squares = (w / side) * (h / side);
 		
@@ -58,35 +58,29 @@ public class Grid {
 		Vec2 gridLoc = screenSpaceToGridPos(p.mouseX, p.mouseY);
 		int xcorn = startX + side * gridLoc.x;
 		int ycorn = startY + side * gridLoc.y;
-		p.noStroke();
-		p.rect(xcorn + 1, 
-			   ycorn + 1,
-			   side - 2, side - 2);
 		
-		p.stroke(0);
-		p.line(xcorn + 1, ycorn + 1, xcorn + side - 2, ycorn + side - 2);
-		p.line(xcorn + side - 2, ycorn + 1, xcorn + 1, ycorn + side - 2);
+		// This is a white square with a cross in it
+		
+		p.strokeWeight(2);
+		p.stroke(32, 216, 51);
+		p.noFill();
+		p.rect(xcorn - 1, ycorn - 1, side + 1, side + 1);
+		
+		p.strokeWeight(1);
+		
+//		p.noStroke();
+//		p.rect(xcorn + 1, 
+//			   ycorn + 1,
+//			   side - 2, side - 2);
+//		
+//		p.stroke(0);
+//		p.line(xcorn + 1, ycorn + 1, xcorn + side - 2, ycorn + side - 2);
+//		p.line(xcorn + side - 2, ycorn + 1, xcorn + 1, ycorn + side - 2);
 	}
 	
-	protected boolean squareIsBeingClicked() {
-		// this solution to mouse held is a bit hacky
-		int curFrame = p.frameCount;
-		
-		// is the mouse depressed?
-		boolean checks = p.mousePressed;
-		// have we already detected this click?
-		checks = checks && (curFrame - toggleFrame) > 20;
-		
-		// check if the mouse in the space of the grid instance
-		checks = checks && inRange(p.mouseX, startX, startX + side * verticals);
-		checks = checks && inRange(p.mouseY, startY, startY + side * horizontals);
-		
-		// ok- toggle the square
-		if (checks) {
-			log.info("Mouse pressed at frame " + curFrame);
-			return true;
-		}
-		return false;
+	protected boolean mouseOverSquare() {
+		return inRange(p.mouseX, startX, startX + side * verticals) && 
+				inRange(p.mouseY, startY, startY + side * horizontals);
 	}
 	
 	/**
