@@ -18,8 +18,6 @@ import processing.data.TableRow;
 
 /**
  * Sugar over the Processing Table API
- * @author charliebrookhouse
- *
  */
 public class CollageActionStore {
 	protected PApplet p;

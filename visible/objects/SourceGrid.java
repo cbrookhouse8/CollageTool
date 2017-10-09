@@ -14,8 +14,6 @@ import utilities.Logger;
 /**
  * TODO: buffer and relativeOrigin should be independent data structure
  * with a .flush() and .getRelativeOrigin()
- * @author charliebrookhouse
- *
  */
 public class SourceGrid extends Grid {
 	

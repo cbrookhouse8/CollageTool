@@ -18,7 +18,6 @@ import utilities.Logger;
 
 /**
  * Holds and displays current state of the Collage
- *
  */
 public class TargetGrid extends Grid {
 	

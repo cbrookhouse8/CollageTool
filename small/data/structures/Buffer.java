@@ -41,7 +41,6 @@ public class Buffer {
 	}
 	
 	/**
-	 * 
 	 * @param gridPos relative position within the grid
 	 */
 	public void add(Vec2 gridPos) {

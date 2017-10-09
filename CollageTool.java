@@ -14,9 +14,6 @@ import utilities.Logger;
 
 /**
  * TODO: handle the offsets properly
- * 
- * @author charlesbrookhouse1
- *
  */
 public class CollageTool extends PApplet {
 	
