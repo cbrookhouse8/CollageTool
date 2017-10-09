@@ -1,7 +1,9 @@
 package small.data.structures;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import utilities.Logger;
 
@@ -19,6 +21,7 @@ public class Buffer {
 	 * Vec2 relative position of square within grid
 	 */
 	public HashMap<Integer, Vec2> map;
+	public HashMap<Integer, Vec2> previousMap;
 	
 	// leftmost upper most square pointed to by the buffer
 	public Vec2 relativeOrigin;
@@ -32,6 +35,7 @@ public class Buffer {
 		log = new Logger(this);
 		gridCols = cols;
 		gridRows = rows;
+		
 		// initialize class variables
 		flush();
 	}
@@ -124,12 +128,27 @@ public class Buffer {
 	
 	public void flush() {
 		log.info("Flush");
+		
+		previousMap = new HashMap<>();
+		
+		// keep a copy of the current map
+		if (map != null && map.size() != 0) {
+		    for (Map.Entry<Integer, Vec2> entry : map.entrySet()) {
+		    		previousMap.put(entry.getKey(), entry.getValue());
+		    }
+		}
+		
+		// reset the map
 		map = new HashMap<>();
 		relativeOrigin = new Vec2(gridCols - 1, gridRows - 1);
 	}
 	
 	public Set<Integer> getKeySet() {
 		return map.keySet();
+	}
+	
+	public Set<Integer> getPreviousKeySet() {
+		return previousMap.keySet();
 	}
 	
 	/**
@@ -145,6 +164,10 @@ public class Buffer {
 		return map;
 	}
 	
+	public HashMap<Integer, Vec2> getPreviousMap() {
+		return previousMap;
+	}
+
 	/**
 	 * @return buffer entry position that would be top left relative to source grid space
 	 */
@@ -155,4 +178,5 @@ public class Buffer {
 	public void setRelativeOrigin(Vec2 manualOverride) {
 		relativeOrigin = manualOverride;
 	}
+	
 }

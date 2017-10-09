@@ -21,10 +21,13 @@ public class SourceGrid extends Grid {
 	
 	public Color[] colors;
 	
+	private List<Vec2> previousSelection;
+	
 	public SourceGrid(PApplet _p, int _startX, int _startY, int _w, int _h, int _side) {
 		super(_p, _startX, _startY, _w, _h, _side);
 		
 		this.setLogger(new Logger(this));
+		previousSelection = new ArrayList<>();
 		
 		// Initialise with arbitrary values
 		colors = new Color[horizontals * verticals];
@@ -103,6 +106,16 @@ public class SourceGrid extends Grid {
 			p.rect(pos.x + 1, 
 				   pos.y + 1,
 				   side - 2, side - 2);
+		}
+	}
+	
+	public void showPreviousSelection(Buffer buffer) {
+		Set<Integer> previouslySelectedSquares = buffer.getPreviousKeySet();
+		for (Integer idx : previouslySelectedSquares) {
+			Vec2 pos = gridIndexToScreenSpace(idx);
+			p.rect(pos.x, 
+				   pos.y,
+				   side - 1, side - 1);
 		}
 	}
 }

@@ -137,6 +137,9 @@ public class CollageTool extends PApplet {
         sourceGrid.showSelectedSquares(buffer);
         
         noFill();
+        stroke(102, 102, 255);
+        sourceGrid.showPreviousSelection(buffer);
+        noFill();
     }
     
     // Processing enforces the logic:
