@@ -5,7 +5,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -83,8 +83,8 @@ public class CollageActionStore {
 	 * 
 	 * @return (key) index into target grid, (value) index into source grid
 	 */
-	public HashMap<Integer, Integer> getGridMap() {
-		HashMap<Integer, Integer> gridMap = new HashMap<>();
+	public LinkedHashMap<Integer, Integer> getGridMap() {
+		LinkedHashMap<Integer, Integer> gridMap = new LinkedHashMap<>();
 		
 		Iterable<TableRow> rowIter = table.rows();
 		

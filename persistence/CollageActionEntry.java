@@ -1,7 +1,7 @@
 package persistence;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ public class CollageActionEntry {
 			int targetGridY, int rowMajor, int imgWidth, int imgHeight, int gridSquareWidth, int verticals,
 			int horizontals) {
 		
-		rowMap = new HashMap<>();
+		rowMap = new LinkedHashMap<>();
 		
 		// One source grid square may be referenced
 		// by many target grid squares

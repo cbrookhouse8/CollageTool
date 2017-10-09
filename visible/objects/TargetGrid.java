@@ -1,10 +1,14 @@
 package visible.objects;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import manipulation.Constrain;
+import manipulation.Transform;
+import manipulation.Translation;
 import persistence.CollageActionEntry;
 import persistence.CollageActionStore;
 import processing.core.PApplet;
@@ -14,6 +18,7 @@ import processing.data.TableRow;
 import small.data.structures.Buffer;
 import small.data.structures.Color;
 import small.data.structures.Vec2;
+import small.data.structures.VecToVec;
 import utilities.Logger;
 
 /**
@@ -22,12 +27,12 @@ import utilities.Logger;
 public class TargetGrid extends Grid {
 	
 	// Target Grid Index => Source Grid Index
-	HashMap<Integer, Integer> gridMap;
+	LinkedHashMap<Integer, Integer> gridMap;
 	PImage imgRef;
 	
 	public TargetGrid(PApplet _p, PImage img, int _startX, int _startY, int _w, int _h, int _side) {
 		super(_p, _startX, _startY, _w, _h, _side);
-		gridMap = new HashMap<>();
+		gridMap = new LinkedHashMap<>();
 		imgRef = img;
 		this.setLogger(new Logger(this));
 	}
@@ -43,41 +48,60 @@ public class TargetGrid extends Grid {
 			return;
 		}
 		
-		HashMap<Integer, Vec2> selection = buffer.getMap();
+		LinkedHashMap<Integer, Vec2> selection = buffer.getMap();
 		
 		if (selection.isEmpty()) {
 			log.info("Tried to updateMap but found buffer was empty");
 			return;
 		}
 		
-		Vec2 relativeOrigin = buffer.getRelativeOrigin();
+		// -- TRANSFORMATIONS --
 		
-//		Color[] sourceColors = sourceGrid.colors;
+		// Transformations must implement the Transform Interface 
+		// The input is a list describing the source to target
+		// vector mappings. The transformation re-specifies the mapping
+		// between the source and target grid.
+		
+		Vec2 relativeOrigin = buffer.getRelativeOrigin();
 		
 		log.info("square has been clicked");
 		
 		// Calculate offset
 		Vec2 offset = screenSpaceToGridPos(p.mouseX, p.mouseY);
 		
-		log.info("updating final map");
+		// TODO: use lambdas
+		
+		// TODO: Beneath all of this is a could be a much better
+		// data structure for representing this grid mapping
+		
+		Transform mouseTrans = new Translation(Vec2.sub(offset, relativeOrigin));
+		Transform insideGrid = new Constrain(0, 0, this.verticals - 1, this.horizontals - 1);
+		
+		// Apply transformations to Vectors
+		
+		log.info("Applying transformations...");
+		
+		List<VecToVec> identityMap = new ArrayList<>();
+		
+		for (Map.Entry<Integer, Vec2> gridSq : selection.entrySet()) {
+			Vec2 v = gridSq.getValue();
+			identityMap.add(new VecToVec(v, v));
+		}
+		
+		List<VecToVec> translated = mouseTrans.applyTo(identityMap);
+		List<VecToVec> constrained = insideGrid.applyTo(translated);
+		
+		log.info("Updating final map...");
 		
 		List<CollageActionEntry> group = new ArrayList<>();
 		
-		for (Map.Entry<Integer, Vec2> gridSq : selection.entrySet()) {
-			int sourceIdx = gridSq.getKey();
-			Vec2 sourceVec = gridSq.getValue();
+		for (VecToVec vw : constrained) {
+			Vec2 sourceVec = vw.getFrom();
+			Vec2 targetLoc = vw.getTo();
+			int sourceIdx = gridPosToGridIndex(vw.getFrom());
+			int targetIdx = gridPosToGridIndex(vw.getTo());
 			
-			// translate by grid space position of mouse over target grid 
-			Vec2 targetLoc = Vec2.add(Vec2.sub(sourceVec, relativeOrigin), offset);
-			
-			if (isOutsideGrid(targetLoc)) {
-				String msg = "Offset (relativeOrigin) resulted in translation ";
-				msg += "of source grid square out of target grid range.";
-				log.info(msg);
-				continue;
-			}
-			
-			int targetIdx = gridPosToGridIndex(targetLoc);
+			// View
 			
 			// if a mapping exists for this index in the 
 			// target grid, then over-write it
@@ -88,6 +112,8 @@ public class TargetGrid extends Grid {
 				gridMap.put(targetIdx, sourceIdx);
 			}
 			
+			// Persistence
+			
 			CollageActionEntry entry = new CollageActionEntry(
 					sourceIdx, targetIdx, 
 					sourceVec.x, sourceVec.y, 
@@ -96,13 +122,14 @@ public class TargetGrid extends Grid {
 					this.verticals, this.horizontals);
 			
 			group.add(entry);
+			
 		}
 				
 		actionStore.addActionGroup(group);
 		buffer.flush();
 	}
 	
-	public void setGridMap(HashMap<Integer, Integer> gridMap) {
+	public void setGridMap(LinkedHashMap<Integer, Integer> gridMap) {
 		this.gridMap = gridMap;
 	}
 	

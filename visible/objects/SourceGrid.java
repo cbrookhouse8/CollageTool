@@ -1,7 +1,7 @@
 package visible.objects;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -58,7 +58,7 @@ public class SourceGrid extends Grid {
 		if (buffer.containsPosition(gridPos)) {
 			buffer.remove(gridPos);
 		} else {
-			buffer.add(gridPos);
+			buffer.insert(gridPos);
 		}
 		
 		return buffer;
@@ -78,7 +78,7 @@ public class SourceGrid extends Grid {
 		// Note difference between this logic
 		// and mouse clicked logic
 		if (!buffer.containsPosition(gridPos)) {
-			buffer.add(gridPos);
+			buffer.insert(gridPos);
 		}
 		
 		return buffer;

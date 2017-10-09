@@ -1,5 +1,5 @@
 import java.io.File;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import persistence.CollageActionStore;
 import persistence.CollageConfiguration;
@@ -98,7 +98,7 @@ public class CollageTool extends PApplet {
 	    targetGrid = new TargetGrid(this, img, imgWidth, 0, imgWidth, imgHeight, gridSquareWidth);
 	    
 	    if (loadedFromFile) { 
-	    		HashMap<Integer, Integer> storedGridMap = actionStore.getGridMap();
+	    		LinkedHashMap<Integer, Integer> storedGridMap = actionStore.getGridMap();
 	    		targetGrid.setGridMap(storedGridMap);
 	    }
 		
@@ -143,20 +143,17 @@ public class CollageTool extends PApplet {
     // mouseClicked xor MouseDragged
     public void mouseClicked() {
     		// don't use mouseReleased to detect mouseClicked
-    		log.info("Mouse clicked at frame " + frameCount);
-    		
     		sourceGrid.updateBufferOnClick(buffer);
     		targetGrid.updateMap(buffer, actionStore);
     }
     
     // Logic: mouseClicked && mouseReleased
-    public void mouseReleased() {
-    		log.info("Mouse released at frame " + frameCount);
-    }
+//    public void mouseReleased() {
+//    		log.info("Mouse released at frame " + frameCount);
+//    }
     
     // Logic: at the end of the drag action, mouseReleased
     public void mouseDragged() {
-    		log.info("Mouse dragged at frame " + frameCount);
     		sourceGrid.updateBufferOnDrag(buffer);
     }
     

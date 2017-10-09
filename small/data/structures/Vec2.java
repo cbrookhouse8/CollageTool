@@ -9,6 +9,12 @@ public class Vec2 {
 		y = _y;
 	}
 	
+	// Create a copy
+	public Vec2(Vec2 v) {
+		this.x = v.getX();
+		this.y = v.getY();
+	}
+	
 	// cast to int
 	public Vec2(float _x, float _y) {
 		x = (int) _x;

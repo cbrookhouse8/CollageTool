@@ -1,6 +1,7 @@
 package small.data.structures;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,8 +21,8 @@ public class Buffer {
 	 * Integer row-major grid index of square
 	 * Vec2 relative position of square within grid
 	 */
-	public HashMap<Integer, Vec2> map;
-	public HashMap<Integer, Vec2> previousMap;
+	public LinkedHashMap<Integer, Vec2> map;
+	public LinkedHashMap<Integer, Vec2> previousMap;
 	
 	// leftmost upper most square pointed to by the buffer
 	public Vec2 relativeOrigin;
@@ -41,9 +42,10 @@ public class Buffer {
 	}
 	
 	/**
+	 * Insert a square location into the buffer
 	 * @param gridPos relative position within the grid
 	 */
-	public void add(Vec2 gridPos) {
+	public void insert(Vec2 gridPos) {
 		
 		// get index
 		int idx = gridPos.y * gridRows + gridPos.x;
@@ -88,22 +90,31 @@ public class Buffer {
 		// check whether relativeOrigin needs updating
 		if (gridPos.equals(relativeOrigin)) {
 			log.info("Removing current relative origin requires the relative origin to be updated.");
-			log.info("Updating relative origin.");
+			log.info("Updating relative origin...");
 			
 			// find a better way of doing this
 			
-			// start bottom right
-			relativeOrigin = new Vec2(gridCols - 1, gridRows - 1);
-			for (Vec2 v : map.values()) {
-			    if (v.x < relativeOrigin.x) {
-			    	relativeOrigin = v;
-			    } else if (v.x == relativeOrigin.x && v.y < relativeOrigin.y) {
-			    	relativeOrigin = v;
-			    }
-			}
+			this.updateRelativeOrigin();	
 		}
 		
 		map.remove(idx);
+	}
+	
+	/**
+	 * TODO: there may be a more efficient way to do this
+	 * @return the new relative origin
+	 */
+	public Vec2 updateRelativeOrigin() {
+		// start bottom right
+		relativeOrigin = new Vec2(gridCols - 1, gridRows - 1);
+		for (Vec2 v : map.values()) {
+			if (v.x < relativeOrigin.x) {
+				relativeOrigin = v;
+			} else if (v.x == relativeOrigin.x && v.y < relativeOrigin.y) {
+				relativeOrigin = v;
+			}
+		}
+		return relativeOrigin;
 	}
 	
 	public boolean containsIndex(int idx) {
@@ -128,7 +139,7 @@ public class Buffer {
 	public void flush() {
 		log.info("Flush");
 		
-		previousMap = new HashMap<>();
+		previousMap = new LinkedHashMap<>();
 		
 		// keep a copy of the current map
 		if (map != null && map.size() != 0) {
@@ -138,7 +149,7 @@ public class Buffer {
 		}
 		
 		// reset the map
-		map = new HashMap<>();
+		map = new LinkedHashMap<>();
 		relativeOrigin = new Vec2(gridCols - 1, gridRows - 1);
 	}
 	
@@ -159,11 +170,11 @@ public class Buffer {
 	 * 
 	 * @return
 	 */
-	public HashMap<Integer, Vec2> getMap() {
+	public LinkedHashMap<Integer, Vec2> getMap() {
 		return map;
 	}
 	
-	public HashMap<Integer, Vec2> getPreviousMap() {
+	public LinkedHashMap<Integer, Vec2> getPreviousMap() {
 		return previousMap;
 	}
 
