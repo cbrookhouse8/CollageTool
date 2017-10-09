@@ -58,5 +58,10 @@ public class Vec2 {
 	public void setY(int y) {
 		this.y = y;
 	}
+
+	@Override
+	public String toString() {
+		return "Vec2 [x=" + x + ", y=" + y + "]";
+	}
 	
 }

@@ -9,7 +9,7 @@ public class VecToVec {
 	Vec2 to;
 
 	public VecToVec(Vec2 from, Vec2 to) {
-		this.from = new Vec2(from.x, from.x);
+		this.from = new Vec2(from.x, from.y);
 		this.to = new Vec2(to.x, to.y);
 	}
 

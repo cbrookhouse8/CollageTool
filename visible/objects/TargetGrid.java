@@ -98,8 +98,8 @@ public class TargetGrid extends Grid {
 		for (VecToVec vw : constrained) {
 			Vec2 sourceVec = vw.getFrom();
 			Vec2 targetLoc = vw.getTo();
-			int sourceIdx = gridPosToGridIndex(vw.getFrom());
-			int targetIdx = gridPosToGridIndex(vw.getTo());
+			int sourceIdx = gridPosToGridIndex(sourceVec);
+			int targetIdx = gridPosToGridIndex(targetLoc);
 			
 			// View
 			
@@ -108,7 +108,7 @@ public class TargetGrid extends Grid {
 			if (gridMap.containsKey(targetIdx)) {
 				gridMap.replace(targetIdx, sourceIdx);
 			} else {
-				log.info("Inserting "+targetIdx+"<=>"+sourceIdx+" into gridMap");
+				log.info("Inserting [target <=> source]: "+targetIdx+"<=>"+sourceIdx+" into gridMap");
 				gridMap.put(targetIdx, sourceIdx);
 			}
 			
