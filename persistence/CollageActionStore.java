@@ -87,7 +87,12 @@ public class CollageActionStore {
 		LinkedHashMap<Integer, Integer> gridMap = new LinkedHashMap<>();
 		
 		Iterable<TableRow> rowIter = table.rows();
+
+		// loop simulates the building of the current collage
+		// writing (or overwriting) the mappings that were
+		// manually specified as the user built up the collage
 		
+		// the final gridMap has the latest state of the collage
 		for (TableRow row : rowIter) {
 			CollageActionEntry entry = CollageActionEntry.of(row);
 			// int is Boxed for the map to Integer
