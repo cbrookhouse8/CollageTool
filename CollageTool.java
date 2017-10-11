@@ -40,6 +40,8 @@ public class CollageTool extends PApplet {
 	 */
 	CollageActionStore actionStore;
 	
+	boolean uiShowMappedSquares;
+	
     // Run this project as Java application and this
     // method will launch the sketch
 	public static void main(String[] args) {
@@ -110,6 +112,8 @@ public class CollageTool extends PApplet {
 	    // initialise to max length
 	    buffer = new Buffer(imgWidth / gridSquareWidth, imgHeight / gridSquareWidth);
 	    
+	    // View options
+	    uiShowMappedSquares = true;
     }
  
     public void draw() {
@@ -145,7 +149,7 @@ public class CollageTool extends PApplet {
         
         noFill();
         stroke(255, 236, 23);
-        sourceGrid.showMappedSquares();
+        sourceGrid.showMappedSquares(uiShowMappedSquares);
     }
     
     // Processing enforces the logic:
@@ -164,6 +168,15 @@ public class CollageTool extends PApplet {
     // Logic: at the end of the drag action, mouseReleased
     public void mouseDragged() {
     		sourceGrid.updateBufferOnDrag(buffer);
+    }
+    
+    public void keyPressed() {
+    		if (key == 's') {
+    			String state = uiShowMappedSquares ? "off" : "on";
+    			String msg = "Turning " + state + " mapped squares view.";
+    			uiShowMappedSquares = !uiShowMappedSquares;
+    			log.info(msg);
+    		}
     }
     
 }	// end of PApplet extension
