@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import utilities.Logger;
 
 /**
+ * 
  * Holds the squares selected from the source grid
  * to be placed in the target grid
  * 
@@ -87,6 +88,8 @@ public class Buffer {
 			return;
 		}
 		
+		map.remove(idx);
+		
 		// check whether relativeOrigin needs updating
 		if (gridPos.equals(relativeOrigin)) {
 			log.info("Removing current relative origin requires the relative origin to be updated.");
@@ -97,7 +100,6 @@ public class Buffer {
 			this.updateRelativeOrigin();	
 		}
 		
-		map.remove(idx);
 	}
 	
 	/**
