@@ -31,6 +31,11 @@ public class Vec2 {
 		y -= t.y;
 	}
 	
+	public void mult(int t) {
+		x *= t;
+		y *= t;
+	}
+	
 	public boolean equals(Vec2 v2) {
 		return (v2.x == x && v2.y == y);
 	}
@@ -43,6 +48,10 @@ public class Vec2 {
 		return new Vec2(a.x - b.x, a.y - b.y);
 	}
 
+	public static Vec2 mult(Vec2 v, int t) {
+		return new Vec2(v.x * t, v.y * t);
+	}
+	
 	public int getX() {
 		return x;
 	}

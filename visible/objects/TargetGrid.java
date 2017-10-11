@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import manipulation.Constrain;
 import manipulation.Transform;
@@ -140,14 +141,54 @@ public class TargetGrid extends Grid {
 		p.noFill();
 	}
 	
-	// ------------------------------------
-	// 			CLASS UTILITIES
-	// ------------------------------------
-	
-	private boolean isOutsideGrid(Vec2 v) {
-		boolean xInRange = inRange(v.x, 0, this.verticals - 1);
-		boolean yInRange = inRange(v.y, 0, this.horizontals - 1);
-		return !(xInRange && yInRange);
+	/**
+	 * TODO: Potentially this logic could be moved to Grid parent class
+	 * if Grid also took GridMap as an initialisation parameter.
+	 * 
+	 * This does break the separation of concerns a bit
+	 * 
+	 * Inputs: mouse position, targetGrid, GridMap
+	 * 
+	 * @param targetGrid
+	 */
+	public void showMapFrom(Grid sourceGrid) {
+		if (sourceGrid.isOutsideGrid(p.mouseX, p.mouseY)) {
+			return;
+		}
+		
+		// Mouse is in the Source Grid area...
+		
+		Vec2 sourcePos = sourceGrid.screenSpaceToGridPos(p.mouseX, p.mouseY);
+		int sourceIdx = sourceGrid.gridPosToGridIndex(sourcePos);
+		
+		List<Integer> targetIds = gridMap.getTargetIdxForSourceIdx(sourceIdx);
+		
+		if (targetIds.size() == 0) {
+			return;
+		}
+		
+		Vec2 squareCentreTranslation = new Vec2((int) (side / 2), (int) (side / 2));
+		
+		// scale to screen space
+		Vec2 sp = Vec2.mult(sourcePos, sourceGrid.getSide());
+		
+		// translate to sourceGrid position on screen
+		sp.add(new Vec2(sourceGrid.getStartX(), sourceGrid.getStartY()));
+		
+		// find the centre of the square rather than the corner
+		Vec2 sourcePosCentred = Vec2.add(sp, squareCentreTranslation);
+		
+		for (Integer targetIdx : targetIds) {
+			Vec2 targetPos = gridIndexToScreenSpace(targetIdx);
+			
+			// find the centre of the square rather than the corner
+			Vec2 targetPosCentred = Vec2.add(targetPos, squareCentreTranslation);
+			
+			p.rect(targetPos.x, targetPos.y, side - 1, side - 1);
+			p.line(sourcePosCentred.x, sourcePosCentred.y, 
+				   targetPosCentred.x, targetPosCentred.y);
+			
+		}		
 	}
 	
 }

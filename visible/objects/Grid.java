@@ -18,19 +18,19 @@ public class Grid {
 	
 	protected Logger log;
 	
-	public Grid(PApplet _p, int _startX, int _startY, int _w, int _h, int _side) {
-		p = _p;
-		w = _w;
-		h = _h;
-		side = _side;
+	public Grid(PApplet p, int startX, int startY, int w, int h, int side) {
+		this.p = p;
+		this.w = w;
+		this.h = h;
+		this.side = side;
 	
-		int n_squares = (w / side) * (h / side);
+//		int n_squares = (w / side) * (h / side);
 		
 		verticals = w / side;
 		horizontals = h / side;
 		
-		this.startX = _startX;
-		this.startY = _startY;
+		this.startX = startX;
+		this.startY = startY;
 		
 		this.setLogger(new Logger(this));
 	}
@@ -51,15 +51,20 @@ public class Grid {
 	}
 
 	public void showHoverSelection() {
+		
+		if (isOutsideGrid(p.mouseX, p.mouseY)) {
+			return;
+		}
+		
 		Vec2 gridLoc = screenSpaceToGridPos(p.mouseX, p.mouseY);
 		int xcorn = startX + side * gridLoc.x;
 		int ycorn = startY + side * gridLoc.y;
 		
 		// This is a white square with a cross in it
 		
-		p.strokeWeight(2);
-		p.stroke(32, 216, 51);
-		p.noFill();
+//		p.strokeWeight(2);
+//		p.stroke(32, 216, 51);
+//		p.noFill();
 		p.rect(xcorn - 1, ycorn - 1, side + 1, side + 1);
 		
 		p.strokeWeight(1);
@@ -91,7 +96,25 @@ public class Grid {
 		return true;
 	}
 	
-	protected Vec2 gridIndexToGridPos(int idx) {
+	/**
+	 * 
+	 * @param mx MouseX in screen space
+	 * @param my MouseY in screen space
+	 * @return
+	 */
+	public boolean isOutsideGrid(int mx, int my) {
+		if (mx < startX || mx > startX + w) {
+			return true;
+		}
+		
+		if (my < startY || my > startY + h) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public Vec2 gridIndexToGridPos(int idx) {
 		Vec2 loc = new Vec2(idx % verticals, idx / horizontals);
 		if (!inRange(loc.x, 0, verticals)) {
 			log.info("Input index is out of grid space. Constraining x");
@@ -106,7 +129,7 @@ public class Grid {
 		return loc;
 	}
 	
-	protected int gridPosToGridIndex(Vec2 pos) {
+	public int gridPosToGridIndex(Vec2 pos) {
 		int idx = pos.y * verticals + pos.x;
 		if (!inRange(idx, -1, verticals * horizontals)) {
 			log.info("Grid position in the index range of the grid. Constraining to 0.");
@@ -173,6 +196,18 @@ public class Grid {
 	
 	protected void setLogger(Logger log) {
 		this.log = log;
+	}
+
+	public int getSide() {
+		return side;
+	}
+	
+	public int getStartX() {
+		return startX;
+	}
+	
+	public int getStartY() {
+		return startY;
 	}
 	
 }

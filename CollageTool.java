@@ -40,7 +40,8 @@ public class CollageTool extends PApplet {
 	 */
 	CollageActionStore actionStore;
 	
-	boolean uiShowMappedSquares;
+	boolean viewAllMappedSquares;
+	boolean viewSpecificMappings;
 	
     // Run this project as Java application and this
     // method will launch the sketch
@@ -113,7 +114,8 @@ public class CollageTool extends PApplet {
 	    buffer = new Buffer(imgWidth / gridSquareWidth, imgHeight / gridSquareWidth);
 	    
 	    // View options
-	    uiShowMappedSquares = true;
+	    viewAllMappedSquares = true;
+	    viewSpecificMappings = true;
     }
  
     public void draw() {
@@ -130,8 +132,11 @@ public class CollageTool extends PApplet {
 //        targetGrid.showColors();
         targetGrid.showImageSegments();
         
-        fill(250);
+		strokeWeight(2);
+		stroke(32, 216, 51);
+		noFill();
         sourceGrid.showHoverSelection();
+        targetGrid.showHoverSelection();
         
         // When squares are clicked on the source
         // update the buffer with their indexes
@@ -139,8 +144,9 @@ public class CollageTool extends PApplet {
         
         // sourceGrid provides the view 
         // context for the buffer
-        fill(42, 182, 242);
-        sourceGrid.showSelectedSquares(buffer);
+		strokeWeight(1);
+		stroke(32, 216, 51);
+        sourceGrid.showCurrentSelection(buffer);
         
         noFill();
         stroke(102, 102, 255);
@@ -149,7 +155,15 @@ public class CollageTool extends PApplet {
         
         noFill();
         stroke(255, 236, 23);
-        sourceGrid.showMappedSquares(uiShowMappedSquares);
+        sourceGrid.showMappedSquares(viewAllMappedSquares);
+        
+        strokeWeight(1);
+		stroke(255);
+		noFill();
+		if (viewSpecificMappings) {
+			sourceGrid.showMapFrom(targetGrid);
+			targetGrid.showMapFrom(sourceGrid);
+		}
     }
     
     // Processing enforces the logic:
@@ -172,9 +186,16 @@ public class CollageTool extends PApplet {
     
     public void keyPressed() {
     		if (key == 's') {
-    			String state = uiShowMappedSquares ? "off" : "on";
-    			String msg = "Turning " + state + " mapped squares view.";
-    			uiShowMappedSquares = !uiShowMappedSquares;
+    			String state = viewAllMappedSquares ? "off" : "on";
+    			String msg = "Turning " + state + " all mapped squares view.";
+    			viewAllMappedSquares = !viewAllMappedSquares;
+    			log.info(msg);
+    		}
+    		
+    		if (key == 'm') {
+    			String state = viewSpecificMappings ? "off" : "on";
+    			String msg = "Turning " + state + " view of specific mappings.";
+    			viewSpecificMappings = !viewSpecificMappings;
     			log.info(msg);
     		}
     }

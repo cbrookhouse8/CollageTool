@@ -3,6 +3,7 @@ package visible.objects;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import processing.core.PApplet;
@@ -98,14 +99,13 @@ public class SourceGrid extends Grid {
 		p.noFill();
 	}
 	
-	public void showSelectedSquares(Buffer buffer) {
-		p.noStroke();
+	public void showCurrentSelection(Buffer buffer) {
 		Set<Integer> selectedSquares = buffer.getKeySet();
 		for (Integer idx : selectedSquares) {
 			Vec2 pos = gridIndexToScreenSpace(idx);
-			p.rect(pos.x + 1, 
-				   pos.y + 1,
-				   side - 2, side - 2);
+			p.rect(pos.x, 
+				   pos.y,
+				   side - 1, side - 1);
 		}
 	}
 	
@@ -119,7 +119,9 @@ public class SourceGrid extends Grid {
 		}
 	}
 	
-	public void showMappedSquares() {
+	public void showMappedSquares(boolean on) {
+		if (on == false) return;
+		
 		List<Integer> mappedSquares = gridMap.getMappedSourceIds();
 		for (Integer idx : mappedSquares) {
 			Vec2 pos = gridIndexToScreenSpace(idx);
@@ -127,5 +129,47 @@ public class SourceGrid extends Grid {
 				   pos.y,
 				   side - 1, side - 1);
 		}
+	}
+	
+	/**
+	 * TODO: Potentially this logic could be moved to Grid parent class
+	 * if Grid also took GridMap as an initialisation parameter.
+	 * 
+	 * This does break the separation of concerns a bit
+	 * 
+	 * Inputs: mouse position, targetGrid, GridMap
+	 * 
+	 * @param targetGrid
+	 */
+	public void showMapFrom(Grid targetGrid) {
+		if (targetGrid.isOutsideGrid(p.mouseX, p.mouseY)) {
+			return;
+		}
+		
+		// Mouse is in the TargetGrid area...
+		
+		Vec2 targetGridPos = targetGrid.screenSpaceToGridPos(p.mouseX, p.mouseY);
+		int targetIdx = targetGrid.gridPosToGridIndex(targetGridPos);
+		Vec2 targetPos = targetGrid.gridIndexToScreenSpace(targetIdx);
+		
+		Optional<Integer> opt = gridMap.getSourceIdxForTargetIdx(targetIdx);
+		
+		if (opt.isPresent() == false) {
+			return;
+		}
+		
+		int sourceIdx = opt.get();
+		Vec2 sourcePos = gridIndexToScreenSpace(sourceIdx);
+		
+		Vec2 squareCentreTranslation = new Vec2((int) (side / 2), (int) (side / 2));
+		
+		Vec2 sourcePosCentred = Vec2.add(sourcePos, squareCentreTranslation);
+		
+		// find the centre of the square rather than the corner
+		Vec2 targetPosCentred = Vec2.add(targetPos, squareCentreTranslation);
+		
+		p.rect(sourcePos.x, sourcePos.y, side - 1, side - 1);
+		p.line(sourcePosCentred.x, sourcePosCentred.y, 
+			   targetPosCentred.x, targetPosCentred.y);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -220,11 +221,14 @@ public class GridMap {
 	
 	/**
 	 * TODO: 'active' is a tautology given the separation of concerns
-	 * Far too much interation here. This is the problem with using 
+	 * 
+	 * Key method used by the TargetGrid for build the view
+	 * 
+	 * Far too much iteration here. This is the problem with using 
 	 * an int[][] as the primary data structure. Some kind of hash
 	 * could be better.
 	 * 
-	 * @return Active mappins as key: targetIdx, value: sourceIdx
+	 * @return Active mappings as key: targetIdx, value: sourceIdx
 	 */
 	public LinkedHashMap<Integer, Integer> getActiveMappings() {
 		LinkedHashMap<Integer, Integer> activeMappings = new LinkedHashMap<>();
@@ -243,6 +247,46 @@ public class GridMap {
 		}
 		
 		return activeMappings;
+	}
+	
+	/**
+	 * Given a targetIdx, find the index of the source square
+	 * mapped to it if there is an active mapping.
+	 * @return Optional of sourceIdx (i.e. could be empty)
+	 */
+	public Optional<Integer> getSourceIdxForTargetIdx(int targetIdx) {
+		int j = targetIdx;
+		Integer sourceIdx = null;
+		for (int i = 0; i < map[0].length; i++) {
+			if (map[j][i] == 1) {
+				sourceIdx = i;
+				// by the mapping constraint, there
+				// will be no more 1s in this column
+				break;
+			}
+		}
+		
+		return Optional.ofNullable(sourceIdx);
+	}
+	
+	/**
+	 * Given a sourceIdx, return a list of all the targetIdx's
+	 * to which it is mapped, if any.
+	 * 
+	 * @param sourceIdx
+	 * @return
+	 */
+	public List<Integer> getTargetIdxForSourceIdx(int sourceIdx) {
+		List<Integer> targetIds = new ArrayList<>();
+		int[] row = getRow(sourceIdx);
+		
+		for (int j = 0; j < row.length; j++) {
+			if (row[j] == 1) {
+				targetIds.add(j);
+			}
+		}
+		
+		return targetIds;
 	}
 	
 	/**
