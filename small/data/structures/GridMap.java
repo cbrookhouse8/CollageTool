@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import persistence.CollageActionStore;
+import persistence.CollageConfiguration;
 import utilities.Logger;
 
 /**
@@ -40,6 +43,14 @@ public class GridMap {
 	private final Logger log;
 	
 	/**
+	 * The boolean matrix is an all right idea although
+	 * repeatedly iterating through the column arrays to
+	 * find mappings is linear time. So will be a better
+	 * data structure to use involving Hashing although
+	 * this current one is nice and visual.
+	 */
+	
+	/**
 	 * The map is always represented by a square matrix
 	 * @param span length of unwrapped input grid
 	 */
@@ -48,9 +59,23 @@ public class GridMap {
 		resetMap(span);
 	}
 	
-	public static GridMap of(int gridCols, int gridRows) {
-		int span = gridCols * gridRows;
-		return new GridMap(span);
+	public static GridMap of(CollageActionStore actionStore) {
+		CollageConfiguration config = actionStore.getCollageConfiguration();
+		int span = config.getHorizontals() * config.getVerticals();
+		
+		GridMap gridMap = new GridMap(span);
+		
+		// representation of current state
+		LinkedHashMap<Integer, Integer> targetToSourceIdxMap = actionStore.getTargetToSourceMap();
+		
+		// insert current state into GridMap
+		for (Map.Entry<Integer, Integer> targetToSource : targetToSourceIdxMap.entrySet()) {
+			Integer targetIdx = targetToSource.getKey();
+			Integer sourceIdx = targetToSource.getValue();
+			gridMap.insert(sourceIdx, targetIdx);
+		}
+		
+		return gridMap;
 	}
 	
 	private void resetMap(int side) {
@@ -142,7 +167,8 @@ public class GridMap {
 	
 	/**
 	 * Array of source grid squares that are currently
-	 * mapped to a target grid square.
+	 * mapped to some target grid square. The value of
+	 * the mapping is not returned however.
 	 * 
 	 * Useful for displaying which squares have already
 	 * been mapped.
@@ -193,6 +219,35 @@ public class GridMap {
 	}
 	
 	/**
+	 * TODO: 'active' is a tautology given the separation of concerns
+	 * Far too much interation here. This is the problem with using 
+	 * an int[][] as the primary data structure. Some kind of hash
+	 * could be better.
+	 * 
+	 * @return Active mappins as key: targetIdx, value: sourceIdx
+	 */
+	public LinkedHashMap<Integer, Integer> getActiveMappings() {
+		LinkedHashMap<Integer, Integer> activeMappings = new LinkedHashMap<>();
+		
+		// Things get a little too loopy here...
+		
+		for (int j = 0; j < map.length; j++) {
+			for (int i = 0; i < map[0].length; i++) {
+				if (map[j][i] == 1) {
+					activeMappings.put(j, i);
+					// by the mapping constraint, there
+					// will be no more 1s in this column
+					break;
+				}
+			}
+		}
+		
+		return activeMappings;
+	}
+	
+	/**
+	 * TODO: create suitable abstractions so that this
+	 * method does not really need to be called.
 	 * @return
 	 */
 	public int[][] getMatrix() {

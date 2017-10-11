@@ -2,7 +2,6 @@ package visible.objects;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +12,8 @@ import persistence.CollageActionEntry;
 import persistence.CollageActionStore;
 import processing.core.PApplet;
 import processing.core.PImage;
-import processing.data.Table;
-import processing.data.TableRow;
 import small.data.structures.Buffer;
-import small.data.structures.Color;
+import small.data.structures.GridMap;
 import small.data.structures.Vec2;
 import small.data.structures.VecToVec;
 import utilities.Logger;
@@ -26,14 +23,15 @@ import utilities.Logger;
  */
 public class TargetGrid extends Grid {
 	
-	// Target Grid Index => Source Grid Index
-	LinkedHashMap<Integer, Integer> gridMap;
-	PImage imgRef;
+	// Grid Map Reference
 	
-	public TargetGrid(PApplet _p, PImage img, int _startX, int _startY, int _w, int _h, int _side) {
+	private final GridMap gridMap;
+	private final PImage imgRef;
+	
+	public TargetGrid(PApplet _p, PImage img, GridMap gridMap, int _startX, int _startY, int _w, int _h, int _side) {
 		super(_p, _startX, _startY, _w, _h, _side);
-		gridMap = new LinkedHashMap<>();
-		imgRef = img;
+		this.gridMap = gridMap;
+		this.imgRef = img;
 		this.setLogger(new Logger(this));
 	}
 	
@@ -103,14 +101,8 @@ public class TargetGrid extends Grid {
 			
 			// View
 			
-			// if a mapping exists for this index in the 
-			// target grid, then over-write it
-			if (gridMap.containsKey(targetIdx)) {
-				gridMap.replace(targetIdx, sourceIdx);
-			} else {
-				log.info("Inserting [target <=> source]: "+targetIdx+"<=>"+sourceIdx+" into gridMap");
-				gridMap.put(targetIdx, sourceIdx);
-			}
+			log.info("Inserting [sourceIdx <=> targetIdx]: "+sourceIdx+"<=>"+targetIdx+" into gridMap");
+			gridMap.insert(sourceIdx, targetIdx);
 			
 			// Persistence
 			
@@ -129,18 +121,19 @@ public class TargetGrid extends Grid {
 		buffer.flush();
 	}
 	
-	public void setGridMap(LinkedHashMap<Integer, Integer> gridMap) {
-		this.gridMap = gridMap;
-	}
-	
 	public void showImageSegments() {
 		p.noStroke();
+		LinkedHashMap<Integer, Integer> activeMappings = gridMap.getActiveMappings();
 		
-		for (Integer targetIdx : gridMap.keySet()) {
-			Vec2 segmentPos = gridIndexToGridPos(gridMap.get(targetIdx));
+		for (Map.Entry<Integer, Integer> targetIdxToSourceIdx : activeMappings.entrySet()) {
+			int targetIdx = targetIdxToSourceIdx.getKey();
+			int sourceIdx = targetIdxToSourceIdx.getValue();
+			
+			Vec2 segmentPos = gridIndexToGridPos(sourceIdx);
 			int xcorn = segmentPos.x * side;
 			int ycorn = segmentPos.y * side;
 			PImage imgSegment = imgRef.get(xcorn, ycorn, side, side);
+			
 			Vec2 outputLoc = gridIndexToScreenSpace(targetIdx);
 			p.image(imgSegment, outputLoc.x, outputLoc.y); 
 		}

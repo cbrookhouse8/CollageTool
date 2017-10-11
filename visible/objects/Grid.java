@@ -16,8 +16,6 @@ public class Grid {
 	protected int startX;
 	protected int startY;
 	
-	protected int toggleFrame;
-	
 	protected Logger log;
 	
 	public Grid(PApplet _p, int _startX, int _startY, int _w, int _h, int _side) {
@@ -30,8 +28,6 @@ public class Grid {
 		
 		verticals = w / side;
 		horizontals = h / side;
-		
-		toggleFrame = 0;
 		
 		this.startX = _startX;
 		this.startY = _startY;

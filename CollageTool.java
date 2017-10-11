@@ -7,6 +7,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.data.Table;
 import small.data.structures.Buffer;
+import small.data.structures.GridMap;
 import visible.objects.Grid;
 import visible.objects.SourceGrid;
 import visible.objects.TargetGrid;
@@ -23,6 +24,8 @@ public class CollageTool extends PApplet {
 	
 	SourceGrid sourceGrid;
 	TargetGrid targetGrid;
+	
+	GridMap gridMap;
 	
 	/**
 	 * holds squares temporarily selected from the sourceGrid
@@ -91,17 +94,19 @@ public class CollageTool extends PApplet {
 	    		gridSquareWidth = config.getGridSquareWidth();
 	    }
 	    
-	    /**
-	     * TODO: add method such as TargetGrid.of(CollageActionStore c, PImage img);
-	     */
-	    sourceGrid = new SourceGrid(this, 0, 0, imgWidth, imgHeight, gridSquareWidth);
-	    targetGrid = new TargetGrid(this, img, imgWidth, 0, imgWidth, imgHeight, gridSquareWidth);
-	    
 	    if (loadedFromFile) { 
-	    		LinkedHashMap<Integer, Integer> storedGridMap = actionStore.getGridMap();
-	    		targetGrid.setGridMap(storedGridMap);
+//    		LinkedHashMap<Integer, Integer> storedGridMap = actionStore.getGridMap();
+//    		targetGrid.setGridMap(storedGridMap);
+	    		gridMap = GridMap.of(actionStore);
+	    } else {
+	    		// Length of the flattened grid
+	    		int span = (imgWidth / gridSquareWidth) * (imgWidth / gridSquareWidth);
+	    		gridMap = new GridMap(span);
 	    }
-		
+	    
+	    sourceGrid = new SourceGrid(this, gridMap, 0, 0, imgWidth, imgHeight, gridSquareWidth);
+	    targetGrid = new TargetGrid(this, img, gridMap, imgWidth, 0, imgWidth, imgHeight, gridSquareWidth);
+	    
 	    // initialise to max length
 	    buffer = new Buffer(imgWidth / gridSquareWidth, imgHeight / gridSquareWidth);
 	    
@@ -137,6 +142,10 @@ public class CollageTool extends PApplet {
         stroke(102, 102, 255);
         sourceGrid.showPreviousSelection(buffer);
         noFill();
+        
+        noFill();
+        stroke(255, 236, 23);
+        sourceGrid.showMappedSquares();
     }
     
     // Processing enforces the logic:

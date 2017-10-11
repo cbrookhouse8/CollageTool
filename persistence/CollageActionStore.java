@@ -17,6 +17,12 @@ import processing.data.Table;
 import processing.data.TableRow;
 
 /**
+ * TODO: create convention for recording squares
+ * that are unmapped. This is useful when toggling
+ * on/off squares in the TargetGrid. Otherwise,
+ * once a square in the TargetGrid has a mapping,
+ * that mapping cannot be erased, only overwritten.
+ * 
  * Sugar over the Processing Table API
  */
 public class CollageActionStore {
@@ -81,10 +87,12 @@ public class CollageActionStore {
 	
 	/**
 	 * 
-	 * @return (key) index into target grid, (value) index into source grid
+	 * @return (key) index into source grid, (value) index into target grid
 	 */
-	public LinkedHashMap<Integer, Integer> getGridMap() {
-		LinkedHashMap<Integer, Integer> gridMap = new LinkedHashMap<>();
+	public LinkedHashMap<Integer, Integer> getTargetToSourceMap() {
+		// By specifying the key as Target, it makes it easy to 
+		// overwrite the source index mapped to that target index
+		LinkedHashMap<Integer, Integer> targetToSourceIdxMap = new LinkedHashMap<>();
 		
 		Iterable<TableRow> rowIter = table.rows();
 
@@ -96,10 +104,10 @@ public class CollageActionStore {
 		for (TableRow row : rowIter) {
 			CollageActionEntry entry = CollageActionEntry.of(row);
 			// int is Boxed for the map to Integer
-			gridMap.put(entry.getTargetIdx(), entry.getSourceIdx());
+			targetToSourceIdxMap.put(entry.getTargetIdx(), entry.getSourceIdx());
 		}
 				
-		return gridMap;
+		return targetToSourceIdxMap;
 	}
 	
 	public void addActionGroup(List<CollageActionEntry> group) {
