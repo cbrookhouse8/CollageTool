@@ -4,6 +4,10 @@ This is an Eclipse Processing3 project which means:
 
 [Processing in Eclipse](https://processing.org/tutorials/eclipse/)
 
+It gives you a minimal UI for making collages. Something like this:
+
+<img src="./example_ui.png" alt="collage" width="500px"/>
+
 **Ideas**
 
 * Undo button
@@ -11,16 +15,6 @@ This is an Eclipse Processing3 project which means:
 * Drag selection
 * manipulations
 
-	```
-		// y-reflect
-		a b c d --> d c b a
-		
-		// y-reflect
-		a b 	 --> b a
-		c d  --> d c
-		
-		// do similar for x
-	```
 * reassign squares within the target grid (in fact, all the operations of the source grid should also be possible for the target grid)
 
 **TODO**
