@@ -6,7 +6,7 @@ This is an Eclipse Processing3 project which means:
 
 It gives you a minimal UI for making collages. Something like this:
 
-<img src="./example_ui.png" alt="collage" width="500px"/>
+<img src="./example_ui.png" alt="collage" width="800px"/>
 
 **Ideas**
 
