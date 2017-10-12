@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import manipulation.Constrain;
+import manipulation.Identity;
 import manipulation.Transform;
 import manipulation.Translation;
 import persistence.CollageActionEntry;
@@ -28,30 +28,38 @@ public class TargetGrid extends Grid {
 	
 	private final GridMap gridMap;
 	private final PImage imgRef;
+	private final Buffer buffer;
 	
-	public TargetGrid(PApplet _p, PImage img, GridMap gridMap, int _startX, int _startY, int _w, int _h, int _side) {
-		super(_p, _startX, _startY, _w, _h, _side);
-		this.gridMap = gridMap;
+	private Transform userTransform;
+	
+	public TargetGrid(PApplet p, PImage img, Buffer buffer, GridMap gridMap, 
+					 int startX, int startY, int w, int h, int side) {
+		
+		super(p, startX, startY, w, h, side);
+		
 		this.imgRef = img;
+		this.gridMap = gridMap;
+		this.buffer = buffer;
+		
+		// TODO: this whole transform thing is hacky and requires
+		// better abstraction and separation of concerns
+		this.userTransform = new Identity();
+		
 		this.setLogger(new Logger(this));
 	}
-	
 	/**
 	 * 
 	 * @param buffer
-	 * @param offset of grid square mouse is over from the top left corner
-	 * of the grid
+	 * @return key: targetIdx, value: sourceIdx
 	 */
-	public void updateMap(Buffer buffer, CollageActionStore actionStore) {
-		if (!mouseOverSquare()) {
-			return;
-		}
-		
+	public LinkedHashMap<Integer, Integer> getCurrentMappingGroup(Vec2 offset) {
 		LinkedHashMap<Integer, Vec2> selection = buffer.getMap();
 		
+		LinkedHashMap<Integer, Integer> group = new LinkedHashMap<>();
+		
 		if (selection.isEmpty()) {
-			log.info("Tried to updateMap but found buffer was empty");
-			return;
+//			log.info("Tried to construct group of mappings but found buffer was empty");
+			return group;
 		}
 		
 		// -- TRANSFORMATIONS --
@@ -63,10 +71,7 @@ public class TargetGrid extends Grid {
 		
 		Vec2 relativeOrigin = buffer.getRelativeOrigin();
 		
-		log.info("square has been clicked");
-		
-		// Calculate offset
-		Vec2 offset = screenSpaceToGridPos(p.mouseX, p.mouseY);
+//		log.info("square has been clicked");
 		
 		// TODO: use lambdas
 		
@@ -78,7 +83,7 @@ public class TargetGrid extends Grid {
 		
 		// Apply transformations to Vectors
 		
-		log.info("Applying transformations...");
+//		log.info("Applying transformations...");
 		
 		List<VecToVec> identityMap = new ArrayList<>();
 		
@@ -87,18 +92,52 @@ public class TargetGrid extends Grid {
 			identityMap.add(new VecToVec(v, v));
 		}
 		
+		// Default transformation
 		List<VecToVec> translated = mouseTrans.applyTo(identityMap);
-		List<VecToVec> constrained = insideGrid.applyTo(translated);
 		
-		log.info("Updating final map...");
+		// User specified transformation
+		List<VecToVec> intermediate = userTransform.applyTo(translated);
 		
-		List<CollageActionEntry> group = new ArrayList<>();
+		// Final default transformation
+		List<VecToVec> constrained = insideGrid.applyTo(intermediate);
+		
+//		log.info("Creating map for insertion into GridMap...");
 		
 		for (VecToVec vw : constrained) {
 			Vec2 sourceVec = vw.getFrom();
 			Vec2 targetLoc = vw.getTo();
 			int sourceIdx = gridPosToGridIndex(sourceVec);
 			int targetIdx = gridPosToGridIndex(targetLoc);
+			group.put(targetIdx, sourceIdx);
+		}
+		
+		return group;
+	}
+	
+	public void updateAndPersistMap(CollageActionStore actionStore /*, List<Transform> userTransforms */) {
+		if (!mouseOverSquare()) {
+			return;
+		}
+		
+		// Calculate offset
+		Vec2 offset = screenSpaceToGridPos(p.mouseX, p.mouseY);
+		
+		LinkedHashMap<Integer, Integer> group = this.getCurrentMappingGroup(offset);
+		
+		log.info("Updating final map...");
+		
+		List<CollageActionEntry> actionGroup = new ArrayList<>();
+		
+		for (Map.Entry<Integer, Integer> targetIdxToSourceIdx : group.entrySet()) {
+			int sourceIdx = targetIdxToSourceIdx.getValue();
+			int targetIdx = targetIdxToSourceIdx.getKey();
+			
+			// TODO: this back and forth conversion has happened quite
+			// a few times already. So not very efficient currently.
+			
+			// assuming that target and source grids are the same dim
+			Vec2 sourceVec = this.gridIndexToGridPos(sourceIdx);
+			Vec2 targetLoc = this.gridIndexToGridPos(targetIdx);
 			
 			// View
 			
@@ -114,12 +153,36 @@ public class TargetGrid extends Grid {
 					1, this.w, this.h, this.side, 
 					this.verticals, this.horizontals);
 			
-			group.add(entry);
-			
+			actionGroup.add(entry);	
 		}
 				
-		actionStore.addActionGroup(group);
+		actionStore.addActionGroup(actionGroup);
 		buffer.flush();
+	}
+	
+	public void showCurrentMappingGroup() {
+		if (!mouseOverSquare()) {
+			return;
+		}
+		
+		// Calculate offset
+		Vec2 offset = screenSpaceToGridPos(p.mouseX, p.mouseY);
+		
+		LinkedHashMap<Integer, Integer> currentMappingGroup = getCurrentMappingGroup(offset);
+		
+		for (Map.Entry<Integer, Integer> targetIdxToSourceIdx : currentMappingGroup.entrySet()) {
+			int targetIdx = targetIdxToSourceIdx.getKey();
+			int sourceIdx = targetIdxToSourceIdx.getValue();
+			
+			Vec2 segmentPos = gridIndexToGridPos(sourceIdx);
+			int xcorn = segmentPos.x * side;
+			int ycorn = segmentPos.y * side;
+			PImage imgSegment = imgRef.get(xcorn, ycorn, side, side);
+			
+			Vec2 outputLoc = gridIndexToScreenSpace(targetIdx);
+			p.image(imgSegment, outputLoc.x, outputLoc.y); 
+		}
+		p.noFill();
 	}
 	
 	public void showImageSegments() {
@@ -188,7 +251,11 @@ public class TargetGrid extends Grid {
 			p.line(sourcePosCentred.x, sourcePosCentred.y, 
 				   targetPosCentred.x, targetPosCentred.y);
 			
-		}		
+		}
+	}
+	
+	public void setUserTransform(Transform userTfm) {
+		this.userTransform = userTfm;
 	}
 	
 }

@@ -1,14 +1,14 @@
-import java.io.File;
-import java.util.LinkedHashMap;
-
+import manipulation.Identity;
+import manipulation.ReflectLocalX;
+import manipulation.ReflectLocalY;
+import manipulation.Shuffle;
+import manipulation.Transform;
 import persistence.CollageActionStore;
 import persistence.CollageConfiguration;
 import processing.core.PApplet;
 import processing.core.PImage;
-import processing.data.Table;
 import small.data.structures.Buffer;
 import small.data.structures.GridMap;
-import visible.objects.Grid;
 import visible.objects.SourceGrid;
 import visible.objects.TargetGrid;
 import utilities.Logger;
@@ -40,6 +40,8 @@ public class CollageTool extends PApplet {
 	 */
 	CollageActionStore actionStore;
 	
+	Transform userTransform;
+	
 	boolean viewAllMappedSquares;
 	boolean viewSpecificMappings;
 	
@@ -56,8 +58,6 @@ public class CollageTool extends PApplet {
     public void setup() {
     	
     		log = new Logger(this);
-    	// Load or Initialize Table
-    	//table = loadTable("collage.csv");
     	
 //    		String file_name = "collage_map.csv";
     		String file_name = "river_dev.csv";
@@ -80,6 +80,8 @@ public class CollageTool extends PApplet {
 	    
 	    gridSquareWidth = 16;	// px
 	    
+	    userTransform = new Identity();
+	    
 	    if (loadedFromFile) {
 	    		CollageConfiguration config = actionStore.getCollageConfiguration();
 	    		
@@ -98,8 +100,6 @@ public class CollageTool extends PApplet {
 	    }
 	    
 	    if (loadedFromFile) { 
-//    		LinkedHashMap<Integer, Integer> storedGridMap = actionStore.getGridMap();
-//    		targetGrid.setGridMap(storedGridMap);
 	    		gridMap = GridMap.of(actionStore);
 	    } else {
 	    		// Length of the flattened grid
@@ -107,11 +107,11 @@ public class CollageTool extends PApplet {
 	    		gridMap = new GridMap(span);
 	    }
 	    
-	    sourceGrid = new SourceGrid(this, gridMap, 0, 0, imgWidth, imgHeight, gridSquareWidth);
-	    targetGrid = new TargetGrid(this, img, gridMap, imgWidth, 0, imgWidth, imgHeight, gridSquareWidth);
-	    
 	    // initialise to max length
 	    buffer = new Buffer(imgWidth / gridSquareWidth, imgHeight / gridSquareWidth);
+	    
+	    sourceGrid = new SourceGrid(this, buffer, gridMap, 0, 0, imgWidth, imgHeight, gridSquareWidth);
+	    targetGrid = new TargetGrid(this, img, buffer, gridMap, imgWidth, 0, imgWidth, imgHeight, gridSquareWidth);
 	    
 	    // View options
 	    viewAllMappedSquares = true;
@@ -132,30 +132,26 @@ public class CollageTool extends PApplet {
 //        targetGrid.showColors();
         targetGrid.showImageSegments();
         
-		strokeWeight(2);
-		stroke(32, 216, 51);
-		noFill();
-        sourceGrid.showHoverSelection();
-        targetGrid.showHoverSelection();
+        targetGrid.showCurrentMappingGroup();
         
         // When squares are clicked on the source
         // update the buffer with their indexes
 //        sourceGrid.showColors();
         
-        // sourceGrid provides the view 
-        // context for the buffer
-		strokeWeight(1);
-		stroke(32, 216, 51);
-        sourceGrid.showCurrentSelection(buffer);
-        
         noFill();
         stroke(102, 102, 255);
-        sourceGrid.showPreviousSelection(buffer);
+        sourceGrid.showPreviousSelection();
         noFill();
         
         noFill();
         stroke(255, 236, 23);
         sourceGrid.showMappedSquares(viewAllMappedSquares);
+        
+        // sourceGrid provides the view 
+        // context for the buffer
+		strokeWeight(1);
+		stroke(32, 216, 51);
+        sourceGrid.showCurrentSelection();
         
         strokeWeight(1);
 		stroke(255);
@@ -164,14 +160,21 @@ public class CollageTool extends PApplet {
 			sourceGrid.showMapFrom(targetGrid);
 			targetGrid.showMapFrom(sourceGrid);
 		}
+		
+		strokeWeight(2);
+		stroke(32, 216, 51);
+		noFill();
+        sourceGrid.showHoverSelection();
+        targetGrid.showHoverSelection();
+        strokeWeight(1);
     }
     
     // Processing enforces the logic:
     // mouseClicked xor MouseDragged
     public void mouseClicked() {
     		// don't use mouseReleased to detect mouseClicked
-    		sourceGrid.updateBufferOnClick(buffer);
-    		targetGrid.updateMap(buffer, actionStore);
+    		sourceGrid.updateBufferOnClick();
+    		targetGrid.updateAndPersistMap(actionStore);
     }
     
     // Logic: mouseClicked && mouseReleased
@@ -181,7 +184,7 @@ public class CollageTool extends PApplet {
     
     // Logic: at the end of the drag action, mouseReleased
     public void mouseDragged() {
-    		sourceGrid.updateBufferOnDrag(buffer);
+    		sourceGrid.updateBufferOnDrag();
     }
     
     public void keyPressed() {
@@ -198,6 +201,31 @@ public class CollageTool extends PApplet {
     			viewSpecificMappings = !viewSpecificMappings;
     			log.info(msg);
     		}
+    		
+    		if (key == 'c') {
+    			log.info("Removing user transforms");
+    			targetGrid.setUserTransform(new Identity());
+    		}
+    		
+    		if (key == 'x') {
+    			log.info("Reflect about local X Axis transform");
+    			targetGrid.setUserTransform(new ReflectLocalX());
+    		}
+    		
+    		if (key == 'y') {
+    			log.info("Reflect about local Y Axis transform");
+    			targetGrid.setUserTransform(new ReflectLocalY());
+    		}
+    		
+    		if (key == 'r') {
+    			log.info("Shuffle the squares");
+    			targetGrid.setUserTransform(new Shuffle());
+    		}
+    		
+    		if (key == 'f') {
+    			buffer.flush();
+    		}
+    		
     }
     
 }	// end of PApplet extension

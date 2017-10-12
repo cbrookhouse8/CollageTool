@@ -39,8 +39,7 @@ public class Constrain implements Transform {
 			inrange.add(v_w);
 		}
 		
-		log.info((map.size() - inrange.size()) +
-					" squares were out of bounds");
+//		log.info((map.size() - inrange.size()) +	" squares were out of bounds");
 		
 		return inrange;
 	}

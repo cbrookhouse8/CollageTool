@@ -1,5 +1,10 @@
 package small.data.structures;
 
+/**
+ * TODO: review whether arithmetic methods
+ * should return a new vector or modify it
+ * in place.
+ */
 public class Vec2 {
 	public int x;
 	public int y;

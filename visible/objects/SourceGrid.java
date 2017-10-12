@@ -23,10 +23,12 @@ public class SourceGrid extends Grid {
 	
 	private List<Vec2> previousSelection;
 	private final GridMap gridMap;
+	private final Buffer buffer;
 	
-	public SourceGrid(PApplet _p, GridMap gridMap, int _startX, int _startY, int _w, int _h, int _side) {
-		super(_p, _startX, _startY, _w, _h, _side);
+	public SourceGrid(PApplet p, Buffer buffer, GridMap gridMap, int startX, int startY, int w, int h, int side) {
+		super(p, startX, startY, w, h, side);
 		this.gridMap = gridMap;
+		this.buffer = buffer;
 		this.setLogger(new Logger(this));
 		previousSelection = new ArrayList<>();
 		
@@ -46,7 +48,7 @@ public class SourceGrid extends Grid {
 	 * 
 	 * @param buffer stores (row-major) indices of current selection
 	 */
-	public Buffer updateBufferOnClick(Buffer buffer) {
+	public Buffer updateBufferOnClick() {
 		if (!mouseOverSquare()) {
 			return buffer;
 		}
@@ -67,7 +69,7 @@ public class SourceGrid extends Grid {
 		return buffer;
 	}
 	
-	public Buffer updateBufferOnDrag(Buffer buffer) {
+	public Buffer updateBufferOnDrag() {
 		if (!mouseOverSquare()) {
 			return buffer;
 		}
@@ -99,7 +101,7 @@ public class SourceGrid extends Grid {
 		p.noFill();
 	}
 	
-	public void showCurrentSelection(Buffer buffer) {
+	public void showCurrentSelection() {
 		Set<Integer> selectedSquares = buffer.getKeySet();
 		for (Integer idx : selectedSquares) {
 			Vec2 pos = gridIndexToScreenSpace(idx);
@@ -109,7 +111,7 @@ public class SourceGrid extends Grid {
 		}
 	}
 	
-	public void showPreviousSelection(Buffer buffer) {
+	public void showPreviousSelection() {
 		Set<Integer> previouslySelectedSquares = buffer.getPreviousKeySet();
 		for (Integer idx : previouslySelectedSquares) {
 			Vec2 pos = gridIndexToScreenSpace(idx);
