@@ -144,7 +144,7 @@ public class CollageTool extends PApplet {
         noFill();
         
         noFill();
-        stroke(255, 236, 23);
+        stroke(219, 0, 172);
         sourceGrid.showMappedSquares(viewAllMappedSquares);
         
         // sourceGrid provides the view 
