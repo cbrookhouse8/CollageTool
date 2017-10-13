@@ -20,7 +20,12 @@ import small.data.structures.VecToVec;
 import utilities.Logger;
 
 /**
- * Holds and displays current state of the Collage
+ * Concerns:
+ * - View of the Collage
+ * - Coordinating Transformations of the Buffer to create
+ * the final mappings between the Source and Target
+ * - Showing which squares in the Target Grid a given
+ * source grid square has been mapped to.
  */
 public class TargetGrid extends Grid {
 	
@@ -185,6 +190,9 @@ public class TargetGrid extends Grid {
 		p.noFill();
 	}
 	
+	/**
+	 * TODO: gridMap.getActiveMappings() should use a cache (in the form of a HashMap)
+	 */
 	public void showImageSegments() {
 		p.noStroke();
 		LinkedHashMap<Integer, Integer> activeMappings = gridMap.getActiveMappings();
@@ -248,12 +256,19 @@ public class TargetGrid extends Grid {
 			Vec2 targetPosCentred = Vec2.add(targetPos, squareCentreTranslation);
 			
 			p.rect(targetPos.x, targetPos.y, side - 1, side - 1);
-			p.line(sourcePosCentred.x, sourcePosCentred.y, 
-				   targetPosCentred.x, targetPosCentred.y);
 			
+			// TODO: bit hacky to have this condition here
+			if (targetIds.size() <= 5) { 
+				p.line(sourcePosCentred.x, sourcePosCentred.y, 
+					   targetPosCentred.x, targetPosCentred.y);
+			}
 		}
 	}
 	
+	/**
+	 * TODO: compose transforms, perhaps pass a List here
+	 * @param userTfm
+	 */
 	public void setUserTransform(Transform userTfm) {
 		this.userTransform = userTfm;
 	}

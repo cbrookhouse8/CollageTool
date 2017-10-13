@@ -166,6 +166,8 @@ public class GridMap {
 	}
 	
 	/**
+	 * TODO: use cache for this
+	 * 
 	 * Array of source grid squares that are currently
 	 * mapped to some target grid square. The value of
 	 * the mapping is not returned however.
@@ -220,6 +222,7 @@ public class GridMap {
 	
 	/**
 	 * TODO: 'active' is a tautology given the separation of concerns
+	 * TODO: use cache for this
 	 * 
 	 * Key method used by the TargetGrid for build the view
 	 * 

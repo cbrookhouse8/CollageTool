@@ -1,29 +1,29 @@
 ### Collage Tool
 
+The program imposes the aesthetic constraint that the collage must be composed from equally sized square sections of the source image. The aim of this software is to provide an efficient way of making collages given this constraint.
+
+A single square segment in the source image can be pasted (*mapped*, *assigned*) to any number of squares in the target grid. The relationship between Source Image sections and Collage sections is therefore one-to-many. This means the collage isn't a simple rearrangement of the square sections of the source image. The source image is more like a palette of colours that never runs out.
+
+Simple transformations can be applied to groups of selected source sections. These transformations only ever reorder the square sections. They do not transform the individual pixels in an image section. You can 'reflect' the order of the squares about a group's local X or Y axis or alternatively randomly re-order of the squares in the group. These operations are useful when you are looking for rearrangements of clusters of square sections in the source image that might give rise to a subtle or interesting pattern.
+
+All paste actions from the source image to the collage grid are written to a file which is represented in memory as the `CollageActionStore`. Overwriting a square in the collage with another one does not remove the record of the previous action. This means you have a complete history of the compositional process, which in its own right is aesthetically interesting.
+
+<img src="./example_ui.png" alt="collage" width="800px"/>
+
 This is an Eclipse Processing3 project which means:
 
 [Processing in Eclipse](https://processing.org/tutorials/eclipse/)
 
-It gives you a minimal UI for making collages. Something like this:
-
-<img src="./example_ui.png" alt="collage" width="800px"/>
-
-**Ideas**
+**Potential Features**
 
 * Undo button
 * Automatically handle rectangular images (not sure resampling is worth it)
-* Drag selection
-* manipulations
+* Composition of Transformations of selected squares
+* reassignment (move) squares within the Target Grid elsewhere in the Target Grid
+* Delete mapping (tricky due to the way the CollageActionStore works)
+* Animate the mapping history
 
-* reassign squares within the target grid (in fact, all the operations of the source grid should also be possible for the target grid)
-
-**TODO**
-
-* Fix selection button
-* show last selection and allow continued pasting until source grid is selected again.
-* show which square will be used as the reference square
-
-**References**
+**Useful Links**
 
 * [Timing](https://processing.org/reference/millis_.html)
 * [Tables](https://processing.org/reference/Table.html)
