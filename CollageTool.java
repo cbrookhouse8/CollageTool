@@ -59,7 +59,7 @@ public class CollageTool extends PApplet {
     	
     		log = new Logger(this);
     	
-//    		String file_name = "collage_map.csv";
+//    	String file_name = "collage_map.csv";
     		String file_name = "river_dev.csv";
     	
 //	    img = loadImage("IMG_1951.jpg");
@@ -125,18 +125,15 @@ public class CollageTool extends PApplet {
         
         stroke(0);
         sourceGrid.showGridLines();
-//        fill(0,179,255,100);
         
         stroke(0);
         targetGrid.showGridLines();
-//        targetGrid.showColors();
         targetGrid.showImageSegments();
         
         targetGrid.showCurrentMappingGroup();
         
         // When squares are clicked on the source
         // update the buffer with their indexes
-//        sourceGrid.showColors();
         
         noFill();
         stroke(102, 102, 255);
@@ -176,11 +173,6 @@ public class CollageTool extends PApplet {
     		sourceGrid.updateBufferOnClick();
     		targetGrid.updateAndPersistMap(actionStore);
     }
-    
-    // Logic: mouseClicked && mouseReleased
-//    public void mouseReleased() {
-//    		log.info("Mouse released at frame " + frameCount);
-//    }
     
     // Logic: at the end of the drag action, mouseReleased
     public void mouseDragged() {

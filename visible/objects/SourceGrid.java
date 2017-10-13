@@ -19,9 +19,6 @@ import utilities.Logger;
  */
 public class SourceGrid extends Grid {
 	
-	public Color[] colors;
-	
-	private List<Vec2> previousSelection;
 	private final GridMap gridMap;
 	private final Buffer buffer;
 	
@@ -30,17 +27,6 @@ public class SourceGrid extends Grid {
 		this.gridMap = gridMap;
 		this.buffer = buffer;
 		this.setLogger(new Logger(this));
-		previousSelection = new ArrayList<>();
-		
-		// Initialise with arbitrary values
-		colors = new Color[horizontals * verticals];
-		
-		for (int i = 0; i < colors.length; i++) {
-			colors[i] = new Color((int) (p.random(0,1) * 255), 
-								(int) (p.random(0,1) * 255),
-								(int) (p.random(0,1) * 255));
-		}
-		
 	}
 	
 	/**
@@ -87,18 +73,6 @@ public class SourceGrid extends Grid {
 		}
 		
 		return buffer;
-	}
-	
-	public void showColors() {
-		p.noStroke();
-		for (int k = 0; k < colors.length; k++) {
-			Vec2 pos = gridIndexToScreenSpace(k);
-			p.fill(colors[k].r, colors[k].g, colors[k].b);
-			p.rect(pos.x + 1, 
-				   pos.y + 1, 
-				   side - 2, side - 2);
-		}
-		p.noFill();
 	}
 	
 	public void showCurrentSelection() {
