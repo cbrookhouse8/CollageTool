@@ -60,8 +60,10 @@ public class CollageTool extends PApplet {
     		log = new Logger(this);
     	
 //    	String file_name = "collage_map.csv";
-    		String file_name = "river_dev.csv";
+//    	String file_name = "river_dev.csv";
+    		String file_name = "sky.csv";
     	
+    		
 //	    img = loadImage("IMG_1951.jpg");
 //	    image(img, 0, 0);
 	    //img = loadImage("IMG_1721.jpg");
@@ -218,6 +220,9 @@ public class CollageTool extends PApplet {
     			buffer.flush();
     		}
     		
+    		if (key == 'z') {
+    			buffer.loadPrevious();
+    		}
     }
     
 }	// end of PApplet extension
