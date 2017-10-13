@@ -16,6 +16,8 @@ This is an Eclipse Processing3 project which means:
 
 **Potential Features**
 
+* Collapse Vertically Transform
+* Collapse Horizontally Transform
 * Undo button
 * Automatically handle rectangular images (not sure resampling is worth it)
 * Composition of Transformations of selected squares
