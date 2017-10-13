@@ -1,14 +1,11 @@
 package visible.objects;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import processing.core.PApplet;
 import small.data.structures.Buffer;
-import small.data.structures.Color;
 import small.data.structures.GridMap;
 import small.data.structures.Vec2;
 import utilities.Logger;
