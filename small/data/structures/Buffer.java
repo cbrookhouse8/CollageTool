@@ -155,6 +155,21 @@ public class Buffer {
 		relativeOrigin = new Vec2(gridCols - 1, gridRows - 1);
 	}
 	
+	public void loadPrevious() {
+		
+		// reset the map
+		map = new LinkedHashMap<>();
+		relativeOrigin = new Vec2(gridCols - 1, gridRows - 1);
+		
+		log.info("Copying previous map into current buffer.");
+		
+		if (this.previousMap != null && previousMap.size() != 0) {
+		    for (Map.Entry<Integer, Vec2> entry : previousMap.entrySet()) {
+		    		this.insert(entry.getValue());
+		    }
+		}
+	}
+	
 	public Set<Integer> getKeySet() {
 		return map.keySet();
 	}
