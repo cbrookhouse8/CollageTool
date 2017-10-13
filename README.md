@@ -9,6 +9,9 @@ Simple transformations can be applied to groups of selected source sections. The
 All paste actions from the source image to the collage grid are written to a file which is represented in memory as the `CollageActionStore`. Overwriting a square in the collage with another one does not remove the record of the previous action. This means you have a complete history of the compositional process, which in its own right is aesthetically interesting.
 
 <img src="./example_ui.png" alt="collage" width="800px"/>
+<br>
+<br>
+<img src="./pixel_sky.png" alt="collage" width="800px"/>
 
 This is an Eclipse Processing3 project which means:
 
